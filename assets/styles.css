@@ -68,8 +68,11 @@ img{max-width:100%;height:auto;display:block}
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:50;
   display:flex;align-items:baseline;justify-content:space-between;
-  padding:14px 28px;
-  background:linear-gradient(rgba(27,18,10,.72), rgba(27,18,10,0));
+  padding:14px 28px 26px;
+  /* holds its depth through the text and fades below it. Over the dark hero
+     this reads as nothing; over the full-bleed photo wall it becomes the soft
+     bar the nav needs to stay readable. */
+  background:linear-gradient(rgba(20,13,7,.95) 0%, rgba(20,13,7,.93) 60%, rgba(20,13,7,0) 100%);
 }
 .nav-brand{
   font-family:var(--script);font-size:1.7rem;color:var(--text-primary);
@@ -84,6 +87,9 @@ img{max-width:100%;height:auto;display:block}
 .nav-links a.nav-cta{
   color:var(--accent);border:1px solid var(--accent-muted);
   padding:.35em 1em;border-radius:999px;
+  /* it sits low enough in the bar that the scrim above has thinned out, so it
+     carries its own ground: unseen on the dark hero, readable on the photos */
+  background:rgba(20,13,7,.92);
   transition:color .3s var(--ease),border-color .3s var(--ease),background .3s var(--ease);
 }
 .nav-links a.nav-cta:hover{color:var(--canvas);background:var(--accent);border-color:var(--accent)}
@@ -605,15 +611,16 @@ main{position:relative;z-index:2;background:var(--canvas)}
   .ig-item:hover img{transform:scale(1.06)}
 }
 
-/* ---------- the instagram wall: twenty photos, no motion, all at once ---------- */
-.ig-grid-wrap{max-width:1180px;margin:0 auto;padding:34px 6vw 0}
-.ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+/* ---------- the instagram wall ----------
+   edge to edge with a hairline between, the way the app itself stacks them.
+   Columns step up on very wide screens so a tile never has to be blown up
+   past the size the uploader saves it at. */
+.ig-grid-wrap{padding:34px 0 0}
+.ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .ig-tile{
-  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:12px;
-  background:var(--panel);border:1px solid rgba(188,169,142,.12);
-  transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
+  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;
+  background:var(--panel);
 }
-.ig-tile:hover{border-color:rgba(188,169,142,.34);box-shadow:0 12px 34px rgba(0,0,0,.45)}
 /* the twenty-first photo and beyond never show */
 .ig-grid .ig-tile:nth-child(n+13){display:none}
 .fx .ig-tile{opacity:0;transform:translateY(14px)}
@@ -639,8 +646,14 @@ main{position:relative;z-index:2;background:var(--canvas)}
   .ig-item{width:255px;border-radius:12px}
   .ig-track{gap:12px}
   @keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 6px),0,0)}}
-  .ig-grid{grid-template-columns:repeat(3,1fr);gap:8px}
-  .ig-grid-wrap{padding:26px 4vw 0}
+  .ig-grid{grid-template-columns:repeat(3,1fr);gap:3px}
+  .ig-grid-wrap{padding:26px 0 0}
+}
+
+/* a wide monitor gets six across rather than four enormous ones: twelve still
+   divides evenly, and each tile stays near the size it was uploaded at */
+@media (min-width:2300px){
+  .ig-grid{grid-template-columns:repeat(6,1fr)}
 }
 
 /* visit */
