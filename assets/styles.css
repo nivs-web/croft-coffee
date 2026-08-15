@@ -516,10 +516,13 @@ main{position:relative;z-index:2;background:var(--canvas)}
 /* the room photo stands upright, so it takes the narrow column and the words
    take the wide one, both settled on the same centre line */
 .space-grid{
-  display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
-  gap:52px;align-items:center;margin-top:40px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:56px;align-items:center;
 }
-.space-grid .lede{max-width:40ch}
+/* the title heads the right column and the sentence sits well below it, so the
+   eye lands on the photo, then the name, then the invitation */
+.space-text .kicker{margin-bottom:10px}
+.space-text .lede{margin-top:40px;max-width:34ch}
 .space-figure{position:relative}
 .space-figure img{border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 .space-figure::before{
@@ -725,6 +728,15 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 /* ---------- responsive ---------- */
 @media (max-width: 900px){
   .philosophy-grid,.space-grid,.visit-card{grid-template-columns:1fr;gap:30px}
+  /* the phone keeps the plain reading order: name, then the photo, then the
+     sentence. display:contents lifts the three out of their wrapper so the
+     figure can sit between them. */
+  .space-grid{gap:0}
+  .space-text{display:contents}
+  .space-grid .kicker{order:1}
+  .space-grid .section-title{order:2}
+  .space-figure{order:3;margin-top:28px}
+  .space-grid .lede{order:4;margin-top:26px;max-width:none}
   .visit-card{grid-template-areas:"map" "info" "actions";padding:20px}
   .visit-map{margin:-20px -20px 0}
   .visit-map-link{border-radius:14px 14px 0 0;border-left:0;border-right:0;border-top:0}
