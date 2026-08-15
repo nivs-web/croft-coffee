@@ -884,7 +884,7 @@ function loadPhotos(key, cb) {
        first screen never carries it */
     if (asked) return;
     asked = true;
-    loadPhotos('interior', function (rows) {
+    loadPhotos('interior' + (webpOK ? '' : '_jpg'), function (rows) {
       track.textContent = '';
       rows.slice(0, MAX).forEach(function (r) {
         var wrap = document.createElement(r.link ? 'a' : 'span');
@@ -938,7 +938,7 @@ function loadPhotos(key, cb) {
   new IntersectionObserver(function (e) {
     if (!e[0].isIntersecting || asked) return;
     asked = true;
-    loadPhotos('insta', function (rows) {
+    loadPhotos('insta' + (webpOK ? '' : '_jpg'), function (rows) {
       grid.textContent = '';
       rows.slice(0, MAX).forEach(function (r) {
         var a = document.createElement('a');

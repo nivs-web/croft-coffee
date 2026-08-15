@@ -156,7 +156,10 @@ function render() {
     link.placeholder = '인스타 게시물 주소 (선택)';
     link.value = r.link || '';
     link.addEventListener('change', () => {
-      update(dbRef(db, KEY + '/' + r.id), { link: link.value.trim() })
+      const patch = {};
+      patch[KEY + '/' + r.id + '/link'] = link.value.trim();
+      patch[KEY + '_jpg/' + r.id + '/link'] = link.value.trim();
+      update(dbRef(db), patch)
         .then(() => say('주소를 저장했습니다.', 'ok'))
         .catch((e) => say('저장 실패: ' + e.code, 'err'));
     });
@@ -166,24 +169,44 @@ function render() {
   });
 }
 
+/* every edit touches both branches so the two stay in step */
 function swap(a, b) {
   if (b < 0 || b >= rows.length) return;
   const patch = {};
-  patch[KEY + '/' + rows[a].id + '/order'] = b;
-  patch[KEY + '/' + rows[b].id + '/order'] = a;
+  [[rows[a].id, b], [rows[b].id, a]].forEach(function (pair) {
+    patch[KEY + '/' + pair[0] + '/order'] = pair[1];
+    patch[KEY + '_jpg/' + pair[0] + '/order'] = pair[1];
+  });
   update(dbRef(db), patch).catch((e) => say('순서 변경 실패: ' + e.code, 'err'));
 }
 
 async function wipe(r) {
   if (!confirm('이 사진을 삭제할까요?')) return;
   try {
-    await remove(dbRef(db, KEY + '/' + r.id));
+    const patch = {};
+    patch[KEY + '/' + r.id] = null;
+    patch[KEY + '_jpg/' + r.id] = null;
+    await update(dbRef(db), patch);
     say('삭제했습니다.', 'ok');
   } catch (e) { say('삭제 실패: ' + e.code, 'err'); }
 }
 
-/* ---------- shrink, square-crop and convert, all in the browser ---------- */
-function toWebP(file) {
+/* ---------- shrink, square-crop and convert, all in the browser ----------
+   Two copies are made: WebP for the 97% of browsers that read it, and JPEG
+   for the rest (old iPhones, pre-2020 Safari, Internet Explorer). They are
+   stored in separate database branches so each visitor downloads only one. */
+function squeeze(canvas, type, startQ) {
+  let q = startQ;
+  let data = canvas.toDataURL(type, q);
+  if (data.indexOf('data:' + type) !== 0) return null;   /* format unsupported here */
+  while (data.length > PER_PHOTO_LIMIT && q > 0.4) {
+    q -= 0.1;
+    data = canvas.toDataURL(type, q);
+  }
+  return data.length > PER_PHOTO_LIMIT ? null : data;
+}
+
+function toImages(file) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const im = new Image();
@@ -195,22 +218,18 @@ function toWebP(file) {
       const ctx = c.getContext('2d');
       const s = Math.min(im.width, im.height);
       ctx.drawImage(im, (im.width - s) / 2, (im.height - s) / 2, s, s, 0, 0, side, side);
-      let data = c.toDataURL('image/webp', QUALITY);
-      if (data.indexOf('data:image/webp') !== 0) {
+
+      const webp = squeeze(c, 'image/webp', QUALITY);
+      if (!webp) {
         reject(new Error('이 브라우저는 WebP 변환을 지원하지 않습니다. 크롬을 써 주세요.'));
         return;
       }
-      /* one more squeeze if it is still heavy for the database */
-      let q = QUALITY;
-      while (data.length > PER_PHOTO_LIMIT && q > 0.4) {
-        q -= 0.1;
-        data = c.toDataURL('image/webp', q);
-      }
-      if (data.length > PER_PHOTO_LIMIT) {
+      const jpg = squeeze(c, 'image/jpeg', Math.min(0.82, QUALITY + 0.08));
+      if (!jpg) {
         reject(new Error('사진이 너무 큽니다. 조금 작은 사진으로 올려 주세요.'));
         return;
       }
-      resolve(data);
+      resolve({ webp, jpg });
     };
     im.onerror = () => {
       URL.revokeObjectURL(url);
@@ -233,11 +252,15 @@ async function handleFiles(fileList) {
   for (const f of use) {
     try {
       say('변환 중… ' + f.name);
-      const data = await toWebP(f);
-      say('저장 중… ' + f.name + ' (' + kb(data.length) + ')');
-      await set(push(dbRef(db, KEY)), {
-        url: data, order: rows.length + done, link: '', createdAt: Date.now()
-      });
+      const pair = await toImages(f);
+      say('저장 중… ' + f.name + ' (WebP ' + kb(pair.webp.length) + ' / JPG ' + kb(pair.jpg.length) + ')');
+      /* one key, two branches: modern browsers read one, old ones the other */
+      const id = push(dbRef(db, KEY)).key;
+      const order = rows.length + done;
+      const patch = {};
+      patch[KEY + '/' + id] = { url: pair.webp, order: order, link: '', createdAt: Date.now() };
+      patch[KEY + '_jpg/' + id] = { url: pair.jpg, order: order, link: '' };
+      await update(dbRef(db), patch);
       done++;
       barFill.style.width = Math.round((done / use.length) * 100) + '%';
     } catch (e) {
