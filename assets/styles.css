@@ -560,9 +560,42 @@ main{position:relative;z-index:2;background:var(--canvas)}
 /* visit */
 .visit-card{
   margin-top:40px;background:var(--panel);border:1px solid rgba(188,169,142,.14);
-  border-radius:16px;padding:40px;
-  display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center;
+  border-radius:16px;padding:32px;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  grid-template-areas:"map map" "info actions";
+  gap:26px 34px;align-items:center;
 }
+.visit-map{grid-area:map;margin:0;position:relative}
+.visit-info{grid-area:info}
+.visit-actions{grid-area:actions}
+
+/* the map: one tap opens the same Naver destination as the button below it */
+.visit-map-link{
+  position:relative;display:block;border-radius:12px;overflow:hidden;
+  border:1px solid rgba(188,169,142,.18);
+}
+.visit-map-link img{width:100%;display:block;transition:transform .9s var(--ease-out)}
+.visit-map-link:hover img{transform:scale(1.03)}
+.map-pin{
+  position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;
+  border-radius:50%;background:var(--accent);border:2.5px solid var(--text-primary);
+  box-shadow:0 3px 12px rgba(0,0,0,.55);pointer-events:none;
+}
+.map-pin::after{
+  content:"";position:absolute;inset:-9px;border-radius:50%;
+  border:2px solid var(--accent);opacity:0;
+}
+body.motion-rich .map-pin::after{animation:pinPulse 3s var(--ease) infinite}
+@keyframes pinPulse{0%{transform:scale(.6);opacity:.8}70%{transform:scale(1.7);opacity:0}100%{opacity:0}}
+.map-open{
+  position:absolute;right:10px;bottom:10px;pointer-events:none;
+  background:rgba(8,8,15,.74);border:1px solid rgba(242,233,216,.28);
+  color:var(--text-primary);font-family:var(--mono);font-size:.72rem;
+  padding:.42em .85em;border-radius:999px;
+}
+.map-credit{margin-top:9px;font-size:.7rem;color:var(--text-secondary);opacity:.72}
+.map-credit a{color:inherit;text-decoration:underline}
 .visit-info{display:grid;gap:16px}
 .visit-info div{display:flex;gap:18px;align-items:baseline}
 .visit-info dt{
@@ -586,6 +619,10 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 /* ---------- responsive ---------- */
 @media (max-width: 900px){
   .philosophy-grid,.space-grid,.visit-card{grid-template-columns:1fr;gap:30px}
+  .visit-card{grid-template-areas:"map" "info" "actions";padding:20px}
+  .visit-map{margin:-20px -20px 0}
+  .visit-map-link{border-radius:14px 14px 0 0;border-left:0;border-right:0;border-top:0}
+  .map-credit{padding:0 20px}
   .cards{grid-template-columns:1fr;max-width:440px;margin-left:auto;margin-right:auto}
   .nav-links{gap:14px}
   .nav-links a:not(.nav-cta){display:none}
