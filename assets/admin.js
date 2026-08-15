@@ -156,11 +156,10 @@ function render() {
     link.placeholder = '인스타 게시물 주소 (선택)';
     link.value = r.link || '';
     link.addEventListener('change', () => {
-      const patch = {};
-      patch[KEY + '/' + r.id + '/link'] = link.value.trim();
-      patch[KEY + '_jpg/' + r.id + '/link'] = link.value.trim();
-      update(dbRef(db), patch)
-        .then(() => say('주소를 저장했습니다.', 'ok'))
+      const v = link.value.trim();
+      const alt = {}; alt[KEY + '_jpg/' + r.id + '/link'] = v;
+      update(dbRef(db, KEY + '/' + r.id), { link: v })
+        .then(() => { mirror(alt); say('주소를 저장했습니다.', 'ok'); })
         .catch((e) => say('저장 실패: ' + e.code, 'err'));
     });
 
@@ -169,24 +168,30 @@ function render() {
   });
 }
 
-/* every edit touches both branches so the two stay in step */
+/* Every edit touches both branches, but the fallback branch is always a
+   separate best-effort write: if its rule is missing, the real edit still
+   goes through instead of failing with it. */
+function mirror(patch) {
+  return update(dbRef(db), patch).catch(function () { /* fallback only */ });
+}
+
 function swap(a, b) {
   if (b < 0 || b >= rows.length) return;
-  const patch = {};
+  const main = {}, alt = {};
   [[rows[a].id, b], [rows[b].id, a]].forEach(function (pair) {
-    patch[KEY + '/' + pair[0] + '/order'] = pair[1];
-    patch[KEY + '_jpg/' + pair[0] + '/order'] = pair[1];
+    main[KEY + '/' + pair[0] + '/order'] = pair[1];
+    alt[KEY + '_jpg/' + pair[0] + '/order'] = pair[1];
   });
-  update(dbRef(db), patch).catch((e) => say('순서 변경 실패: ' + e.code, 'err'));
+  update(dbRef(db), main)
+    .then(() => mirror(alt))
+    .catch((e) => say('순서 변경 실패: ' + e.code, 'err'));
 }
 
 async function wipe(r) {
   if (!confirm('이 사진을 삭제할까요?')) return;
   try {
-    const patch = {};
-    patch[KEY + '/' + r.id] = null;
-    patch[KEY + '_jpg/' + r.id] = null;
-    await update(dbRef(db), patch);
+    await remove(dbRef(db, KEY + '/' + r.id));
+    remove(dbRef(db, KEY + '_jpg/' + r.id)).catch(function () {});
     say('삭제했습니다.', 'ok');
   } catch (e) { say('삭제 실패: ' + e.code, 'err'); }
 }
@@ -249,18 +254,25 @@ async function handleFiles(fileList) {
 
   bar.classList.add('on');
   let done = 0;
+  let fallbackWarn = false;
   for (const f of use) {
     try {
       say('변환 중… ' + f.name);
       const pair = await toImages(f);
       say('저장 중… ' + f.name + ' (WebP ' + kb(pair.webp.length) + ' / JPG ' + kb(pair.jpg.length) + ')');
-      /* one key, two branches: modern browsers read one, old ones the other */
+      /* one key, two branches: modern browsers read one, old ones the other.
+         The main photo is saved on its own first, so a missing rule on the
+         fallback branch can never block the upload itself. */
       const id = push(dbRef(db, KEY)).key;
       const order = rows.length + done;
-      const patch = {};
-      patch[KEY + '/' + id] = { url: pair.webp, order: order, link: '', createdAt: Date.now() };
-      patch[KEY + '_jpg/' + id] = { url: pair.jpg, order: order, link: '' };
-      await update(dbRef(db), patch);
+      await set(dbRef(db, KEY + '/' + id), {
+        url: pair.webp, order: order, link: '', createdAt: Date.now()
+      });
+      try {
+        await set(dbRef(db, KEY + '_jpg/' + id), { url: pair.jpg, order: order, link: '' });
+      } catch (e2) {
+        fallbackWarn = true;
+      }
       done++;
       barFill.style.width = Math.round((done / use.length) * 100) + '%';
     } catch (e) {
@@ -268,7 +280,12 @@ async function handleFiles(fileList) {
     }
   }
   setTimeout(() => { bar.classList.remove('on'); barFill.style.width = '0'; }, 700);
-  if (done) say(done + '장을 올렸습니다. 홈페이지에 바로 반영됩니다.', 'ok');
+  if (done && fallbackWarn) {
+    say(done + '장을 올렸습니다. 다만 구형 브라우저용 사본(' + KEY + '_jpg)은 저장되지 않았습니다. '
+      + '데이터베이스 규칙에 ' + KEY + '_jpg 를 추가하고 다시 올려 주세요.', 'err');
+  } else if (done) {
+    say(done + '장을 올렸습니다. 홈페이지에 바로 반영됩니다.', 'ok');
+  }
 }
 
 const drop = $('drop');
