@@ -30,7 +30,7 @@
     <a href="#philosophy">철학</a>
     <a href="#coffee">커피</a>
     <a href="#space">공간</a>
-    <a href="#interior">내부</a>
+    <a href="#menu">메뉴</a>
     <a href="#faq">안내</a>
     <a href="#instagram">인스타그램</a>
     <a class="nav-cta" href="#visit">길 찾기</a>
@@ -244,7 +244,7 @@
     </div>
   </section>
 
-  <section class="section interior" id="interior">
+  <section class="section menu" id="menu">
     <div class="divider" aria-hidden="true">
       <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
         <g class="lattice" fill="none" stroke-linecap="round">
@@ -255,13 +255,14 @@
         <circle class="node" cx="100" cy="20" r="2.4"/>
       </svg>
     </div>
-    <p class="kicker" lang="en">inside</p>
-    <h2 class="section-title">내부 공간</h2>
-    <p class="interior-sub" data-reveal>천천히 지나가는 크로프트의 안쪽입니다.</p>
+    <p class="kicker" lang="en">menu</p>
+    <h2 class="section-title">메뉴</h2>
+    <p class="menu-sub" data-reveal>잔도 커피도 그날그날 다릅니다.</p>
   </section>
 
-  <div class="ig-marquee interior-lane" id="interiorMarquee" data-max="6" aria-label="내부 공간 사진">
-    <div class="ig-track" id="interiorTrack">
+  <div class="lane-shell">
+  <div class="ig-marquee menu-lane" id="menuMarquee" data-max="20" aria-label="메뉴 사진">
+    <div class="ig-track" id="menuTrack">
       <span class="ig-item"><picture><source type="image/avif" srcset="assets/still-space-640.avif"><source type="image/webp" srcset="assets/still-space-640.webp"><img src="assets/still-space-640.jpg" width="640" height="429" alt="크로프트 내부, 나무 카운터와 스테인드글라스 조명" loading="lazy" decoding="async"></picture></span>
       <span class="ig-item"><picture><source type="image/avif" srcset="assets/still-espresso-640.avif"><source type="image/webp" srcset="assets/still-espresso-640.webp"><img src="assets/still-espresso-640.jpg" width="640" height="478" alt="골동품 잔에 담긴 에스프레소" loading="lazy" decoding="async"></picture></span>
       <span class="ig-item"><picture><source type="image/avif" srcset="assets/hero-ending-640.avif"><source type="image/webp" srcset="assets/hero-ending-640.webp"><img src="assets/hero-ending-640.jpg" width="640" height="360" alt="카운터 위에 놓인 커피 한 잔" loading="lazy" decoding="async"></picture></span>
@@ -269,6 +270,9 @@
       <span class="ig-item"><picture><source type="image/avif" srcset="assets/brew-poster.avif"><source type="image/webp" srcset="assets/brew-poster.webp"><img src="assets/brew-poster.jpg" width="640" height="313" alt="추출되는 에스프레소" loading="lazy" decoding="async"></picture></span>
       <span class="ig-item"><picture><source type="image/avif" srcset="assets/still-coldbrew-640.avif"><source type="image/webp" srcset="assets/still-coldbrew-640.webp"><img src="assets/still-coldbrew-640.jpg" width="640" height="478" alt="콜드 브루 한 잔" loading="lazy" decoding="async"></picture></span>
     </div>
+  </div>
+  <button class="lane-arrow prev" id="menuPrev" type="button" aria-label="이전 사진"><span></span></button>
+  <button class="lane-arrow next" id="menuNext" type="button" aria-label="다음 사진"><span></span></button>
   </div>
 
   <section class="section faq" id="faq">
@@ -311,7 +315,7 @@
   </section>
 
   <div class="ig-grid-wrap">
-    <div class="ig-grid" id="igGrid" data-max="20">
+    <div class="ig-grid" id="igGrid" data-max="12">
       <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/DRD3tdrk6al/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
         <picture>
           <source type="image/avif" srcset="assets/still-space-640.avif">
@@ -396,62 +400,6 @@
           <img src="assets/still-coldbrew-640.jpg" alt="" loading="lazy" decoding="async">
         </picture>
       </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/CsSeCvfJlll/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/brew-poster.avif">
-          <source type="image/webp" srcset="assets/brew-poster.webp">
-          <img src="assets/brew-poster.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/CnjA9cKp8In/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/hero-poster.avif">
-          <source type="image/webp" srcset="assets/hero-poster.webp">
-          <img src="assets/hero-poster.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/ClaUTUxJwGi/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/still-space-640.avif">
-          <source type="image/webp" srcset="assets/still-space-640.webp">
-          <img src="assets/still-space-640.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/Cj9TeAaJqUV/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/still-espresso-640.avif">
-          <source type="image/webp" srcset="assets/still-espresso-640.webp">
-          <img src="assets/still-espresso-640.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/Cjt__BAp0Tv/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/hero-ending-640.avif">
-          <source type="image/webp" srcset="assets/hero-ending-640.webp">
-          <img src="assets/hero-ending-640.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/Ci36_e_J0Q5/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/still-handdrip-640.avif">
-          <source type="image/webp" srcset="assets/still-handdrip-640.webp">
-          <img src="assets/still-handdrip-640.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/Ch1ATBRJdBq/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/still-coldbrew-640.avif">
-          <source type="image/webp" srcset="assets/still-coldbrew-640.webp">
-          <img src="assets/still-coldbrew-640.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
-      <a class="ig-tile" href="https://www.instagram.com/croft_coffee/p/Chv26qHpG1B/" target="_blank" rel="noopener" aria-label="인스타그램 게시물 열기">
-        <picture>
-          <source type="image/avif" srcset="assets/brew-poster.avif">
-          <source type="image/webp" srcset="assets/brew-poster.webp">
-          <img src="assets/brew-poster.jpg" alt="" loading="lazy" decoding="async">
-        </picture>
-      </a>
     </div>
     <a class="ig-cta" href="https://www.instagram.com/croft_coffee" target="_blank" rel="noopener">@croft_coffee 에서 더 보기</a>
   </div>
@@ -509,7 +457,7 @@
 
 <footer class="footer">
   <p><span class="footer-script" lang="en">croft coffee</span> · 크로프트 커피 · 강원도 속초시 영랑해안5길 15 ·
-    © 2026 <a class="footer-quiet" href="update_insta.html" tabindex="-1">croft coffee</a></p>
+    © 2026 <a class="footer-quiet" href="update_menu.html" tabindex="-1">croft coffee</a></p>
 </footer>
 
 <button class="pager" id="pager" type="button" aria-label="다음 섹션으로">

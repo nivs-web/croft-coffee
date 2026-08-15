@@ -842,49 +842,128 @@ function loadPhotos(key, cb) {
     .catch(function () { /* the built-in photos carry the section */ });
 }
 
-/* ---------- the interior lane: the slow drift, capped at six photos ----------
-   The set is repeated until it outruns the screen, then a second copy is laid
-   after it so the loop point can never show. */
+/* ---------- the menu lane: a slow drift you can also steer ----------
+   The lane is a real scrolling strip, so it drifts on its own, a finger can
+   swipe it, and the arrows move it a screen at a time. Hovering holds it. */
 (function () {
-  var lane = document.getElementById('interiorMarquee');
-  var track = document.getElementById('interiorTrack');
+  var lane = document.getElementById('menuMarquee');
+  var track = document.getElementById('menuTrack');
   if (!lane || !track) return;
-  var MAX = parseInt(lane.getAttribute('data-max'), 10) || 6;
+  var MAX = parseInt(lane.getAttribute('data-max'), 10) || 20;
+  var SPEED = 38;              /* pixels a second: a drift, not a slide */
+  var STILL = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var setW = 0;
+  var raf = null, last = 0, visible = false;
+  var resting = false, quietUntil = 0;
 
   function build() {
     [].slice.call(track.children).forEach(function (n) { if (n.dataset.clone) n.remove(); });
     var base = [].slice.call(track.children);
     base.slice(MAX).forEach(function (n) { n.style.display = 'none'; });
     base = base.slice(0, MAX);
+    setW = 0;
     if (!base.length) return;
-    var gap = parseFloat(getComputedStyle(track).columnGap) || 16;
-    var one = base.reduce(function (w, n) { return w + n.getBoundingClientRect().width + gap; }, 0);
-    if (one < 40) return;
-    var repeats = Math.max(1, Math.ceil((window.innerWidth + 400) / one));
-    var frag = document.createDocumentFragment();
-    for (var r = 0; r < repeats * 2 - 1; r++) {
+    /* asked for stillness: the css wraps these into a plain block of photos,
+       so no clones, no measuring, and the motor below never starts */
+    if (STILL) { lane.classList.add('ready'); return; }
+
+    function copy() {
+      var frag = document.createDocumentFragment(), first = null;
       base.forEach(function (n) {
         var c = n.cloneNode(true);
         c.dataset.clone = '1';
         c.setAttribute('aria-hidden', 'true');
+        if (!first) first = c;
         frag.appendChild(c);
       });
+      track.appendChild(frag);
+      return first;
     }
-    track.appendChild(frag);
-    lane.classList.add('run');
+
+    /* the loop is only seamless if the wrap distance is the true repeat period,
+       so lay one copy down and measure where it actually starts. Summing widths
+       and gaps drifts by a fraction on every tile and lands on the wrong photo. */
+    var mark = copy();
+    setW = mark.getBoundingClientRect().left - base[0].getBoundingClientRect().left;
+    if (setW < 40) { setW = 0; return; }
+
+    /* enough copies that the strip is always longer than the screen */
+    var more = Math.max(2, Math.ceil((lane.clientWidth + 400) / setW) + 1);
+    for (var r = 1; r < more; r++) copy();
+    lane.classList.add('ready');
   }
 
-  var built = false;
-  function boot() { if (!built) { built = true; build(); } }
-  var asked = false;
+  /* scrollLeft snaps to whole pixels, so a sub-pixel step would round up to a
+     full one every frame and run far faster than asked. Carry the real position
+     in a float and only write when the whole pixel actually changes. */
+  var pos = 0;
+  function tick(now) {
+    var dt = Math.min(100, now - (last || now));
+    last = now;
+    if (visible && !resting && now >= quietUntil) {
+      if (Math.round(pos) !== Math.round(lane.scrollLeft)) pos = lane.scrollLeft;  /* a finger or an arrow moved it */
+      pos += SPEED * dt / 1000;
+      if (pos >= setW) pos -= setW;                            /* seamless wrap */
+      var want = Math.round(pos);
+      if (want !== Math.round(lane.scrollLeft)) lane.scrollLeft = want;
+    }
+    raf = visible ? requestAnimationFrame(tick) : null;
+    if (!visible) last = 0;
+  }
+  /* either half can arrive first, so recheck both and start from whichever lands last */
+  var onScreen = false;
+  function run() {
+    visible = onScreen && setW > 0;
+    if (visible && raf === null) raf = requestAnimationFrame(tick);
+  }
+
+  /* two ways to hold it: a pointer resting on it, or a quiet spell after a touch
+     or an arrow. The quiet spell is a deadline, not a timer, so overlapping
+     holds can never strand the lane. */
+  function quiet(ms) { quietUntil = Math.max(quietUntil, performance.now() + ms); }
+  function letGo() { resting = false; }
+  /* only a real mouse may rest on it. A tap makes phones synthesise a mouseenter
+     with no mouseleave to follow, which would park the lane for good. */
+  var shell = lane.parentNode;   /* holds the arrows, so hover must count there */
+  if (window.PointerEvent) {
+    shell.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'mouse') resting = true; else quiet(2500);
+    });
+    shell.addEventListener('pointerleave', letGo);
+  } else {
+    shell.addEventListener('mouseenter', function () { resting = true; });
+    shell.addEventListener('mouseleave', letGo);
+  }
+  /* likewise focus: keyboard focus is a reader pausing, a tap-focus is not */
+  shell.addEventListener('focusin', function (e) {
+    var vis = true;
+    try { vis = e.target.matches(':focus-visible'); } catch (err) { }
+    if (vis) resting = true; else quiet(1200);
+  });
+  shell.addEventListener('focusout', letGo);
+  lane.addEventListener('touchstart', function () { letGo(); quiet(2500); }, { passive: true });
+  lane.addEventListener('touchmove', function () { letGo(); quiet(2500); }, { passive: true });
+
+  function step(dir) {
+    if (!setW) return;
+    quiet(900);
+    var by = Math.max(240, lane.clientWidth * 0.8) * dir;
+    /* keep the wrap sane when stepping backwards past the start */
+    if (dir < 0 && lane.scrollLeft + by < 0) lane.scrollLeft += setW;
+    lane.scrollBy({ left: by, behavior: 'smooth' });
+  }
+  var prev = document.getElementById('menuPrev');
+  var next = document.getElementById('menuNext');
+  if (prev) prev.addEventListener('click', function () { step(-1); });
+  if (next) next.addEventListener('click', function () { step(1); });
+
+  var built = false, asked = false;
   new IntersectionObserver(function (e) {
     if (!e[0].isIntersecting) return;
-    boot();
-    /* the photo data is only fetched once the visitor is nearly here, so the
-       first screen never carries it */
+    if (!built) { built = true; build(); run(); }
     if (asked) return;
     asked = true;
-    loadPhotos('interior' + (webpOK ? '' : '_jpg'), function (rows) {
+    loadPhotos('menu' + (webpOK ? '' : '_jpg'), function (rows) {
       track.textContent = '';
       rows.slice(0, MAX).forEach(function (r) {
         var wrap = document.createElement(r.link ? 'a' : 'span');
@@ -895,22 +974,21 @@ function loadPhotos(key, cb) {
         wrap.appendChild(img);
         track.appendChild(wrap);
       });
-      built = false;
-      lane.classList.remove('run');
-      boot();
+      lane.scrollLeft = 0;
+      build();
+      run();
     });
   }, { rootMargin: '400px 0px' }).observe(lane);
-  new IntersectionObserver(function (e) {
-    if (built) lane.classList.toggle('run', e[0].isIntersecting);
-  }, { threshold: 0 }).observe(lane);
+
+  new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; run(); },
+    { threshold: 0 }).observe(lane);
 
   var rebuild = null;
   addEventListener('resize', function () {
     if (!built) return;
     clearTimeout(rebuild);
-    rebuild = setTimeout(build, 300);
+    rebuild = setTimeout(function () { build(); run(); }, 300);
   });
-
 })();
 
 /* ---------- the instagram wall: a still grid that arrives in sequence ---------- */

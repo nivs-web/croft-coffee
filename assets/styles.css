@@ -527,20 +527,57 @@ main{position:relative;z-index:2;background:var(--canvas)}
 .faq-item dt{font-family:var(--display);font-size:1.06rem}
 .faq-item dd{color:var(--text-secondary);margin-top:10px;max-width:56ch}
 
-/* ---------- the interior lane: the same slow drift, half again as large ----------
-   90 seconds a lap. Hovering stops it, and hovering a photo sharpens it. */
-.interior{padding-bottom:30px}
-.interior-sub{color:var(--text-secondary);margin-top:14px}
+/* ---------- the menu lane: a slow drift you can steer with the arrows ----------
+   A drift, not a slide. Hovering stops it; the arrows page through it fast. */
+.menu{padding-bottom:30px}
+.menu-sub{color:var(--text-secondary);margin-top:14px}
+
+/* the lane is a real scrolling strip: it drifts on its own, a finger can
+   swipe it, and the arrows move it a screen at a time */
+/* the arrows anchor to this shell, not to the scroller: pinned inside a
+   scrolling box they would slide away with the photos */
+.lane-shell{position:relative;z-index:2}
 .ig-marquee{
-  position:relative;z-index:2;overflow:hidden;padding:4px 0 0;
+  padding:4px 0 0;
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;-ms-overflow-style:none;
+  overscroll-behavior-x:contain;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
-.ig-track{display:flex;gap:16px;width:max-content;will-change:transform}
-.ig-marquee.run .ig-track{animation:igFlow 90s linear infinite}
-.ig-marquee.run:hover .ig-track,
-.ig-marquee.run:focus-within .ig-track{animation-play-state:paused}
-@keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 8px),0,0)}}
+.ig-marquee::-webkit-scrollbar{display:none}
+.ig-track{display:flex;gap:16px;width:max-content}
+
+/* the arrows: quiet until the lane is hovered, always there on touch */
+.lane-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:4;
+  width:52px;height:52px;border-radius:50%;cursor:pointer;padding:0;
+  display:grid;place-items:center;
+  background:rgba(8,8,15,.6);border:1px solid rgba(242,233,216,.32);
+  opacity:0;transition:opacity .35s var(--ease),background .3s var(--ease),border-color .3s var(--ease);
+}
+/* only where a pointer can truly hover: on a phone the lit state would stay
+   stuck on whichever arrow was tapped last */
+@media (hover:hover){
+  .lane-shell:hover .lane-arrow,
+  .lane-shell:focus-within .lane-arrow{opacity:1}
+  .lane-arrow:hover{background:rgba(8,8,15,.85);border-color:var(--accent)}
+}
+.lane-arrow:focus-visible{background:rgba(8,8,15,.85);border-color:var(--accent);opacity:1}
+.lane-arrow:active{background:rgba(8,8,15,.85)}
+.lane-arrow.prev{left:calc(7% + 10px)}
+.lane-arrow.next{right:calc(7% + 10px)}
+.lane-arrow span{
+  width:12px;height:12px;
+  border-right:2px solid var(--text-primary);border-bottom:2px solid var(--text-primary);
+}
+.lane-arrow.prev span{transform:rotate(135deg);margin-left:4px}
+.lane-arrow.next span{transform:rotate(-45deg);margin-right:4px}
+@media (pointer:coarse){
+  .lane-arrow{opacity:.85;width:46px;height:46px}
+  .lane-arrow.prev{left:8px}
+  .lane-arrow.next{right:8px}
+}
 
 .ig-item{
   position:relative;display:block;flex:0 0 auto;
@@ -568,7 +605,7 @@ main{position:relative;z-index:2;background:var(--canvas)}
 }
 .ig-tile:hover{border-color:rgba(188,169,142,.34);box-shadow:0 12px 34px rgba(0,0,0,.45)}
 /* the twenty-first photo and beyond never show */
-.ig-grid .ig-tile:nth-child(n+21){display:none}
+.ig-grid .ig-tile:nth-child(n+13){display:none}
 .fx .ig-tile{opacity:0;transform:translateY(14px)}
 .fx .ig-grid.in .ig-tile{
   opacity:1;transform:translateY(0);
@@ -722,8 +759,8 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
   /* the second film becomes a quiet text block, all three lines at once */
   .film2{height:auto}
   /* the lane stops moving and becomes a plain wrapped set of photos */
-  .ig-marquee{-webkit-mask-image:none;mask-image:none;padding:0 6vw}
-  .ig-marquee.run .ig-track{animation:none !important}
+  .ig-marquee{-webkit-mask-image:none;mask-image:none;padding:0 6vw;overflow-x:hidden}
+  .lane-arrow{display:none}
   .ig-track{flex-wrap:wrap;width:auto;justify-content:center}
   .ig-item[data-clone]{display:none}
   .film2-stage{

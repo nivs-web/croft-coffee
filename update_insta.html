@@ -30,7 +30,7 @@
 
   <div id="panel" hidden>
     <h1>인스타그램 사진</h1>
-    <p class="sub">홈페이지 맨 아래 인스타그램 칸에 격자로 깔리는 사진입니다. 앞에서부터 20장까지 보입니다.</p>
+    <p class="sub">홈페이지 맨 아래 인스타그램 칸에 격자로 깔리는 사진입니다. 앞에서부터 12장까지 보입니다.</p>
     <p class="count" id="count"></p>
 
     <div class="drop" id="drop">
@@ -41,19 +41,19 @@
       <p class="msg" id="msg"></p>
     </div>
 
-    <p class="cap-note">21장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
+    <p class="cap-note">13장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
       순서는 ↑ ↓ 로 바꾸고, ✕ 로 지웁니다.</p>
 
     <div class="items" id="items"></div>
 
     <p style="margin-top:34px">
-      <a class="btn btn-quiet btn-sm" href="update_interior.html">내부 공간 사진 관리로</a>
+      <a class="btn btn-quiet btn-sm" href="update_menu.html">메뉴 사진 관리로</a>
       <button class="btn btn-quiet btn-sm" id="logoutBtn" type="button">로그아웃</button>
     </p>
   </div>
 
 </div>
-<script>window.ADMIN = { key: 'insta', max: 20, maxEdge: 460, quality: 0.70 };</script>
+<script>window.ADMIN = { key: 'insta', max: 12, maxEdge: 460, quality: 0.70 };</script>
 <script type="module" src="assets/admin.js"></script>
 </body>
 </html>

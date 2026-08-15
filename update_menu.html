@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>내부 공간 사진 관리 · croft coffee</title>
+<title>메뉴 사진 관리 · croft coffee</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231B120A'/%3E%3Cg stroke='%23F2E9D8' stroke-width='1.4' fill='none'%3E%3Cpath d='M16 4 L16 28 M4 16 L28 16 M7.5 7.5 L24.5 24.5 M24.5 7.5 L7.5 24.5'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +21,7 @@
 
   <div class="gate" id="gate" hidden>
     <h1>관리자 전용</h1>
-    <p>내부 공간 사진을 관리하려면 구글 계정으로 로그인하세요.</p>
+    <p>메뉴 사진을 관리하려면 구글 계정으로 로그인하세요.</p>
     <button class="btn" id="loginBtn" type="button">구글로 로그인</button>
     <p class="msg" id="gateMsg"></p>
     <p class="gate-note">등록된 관리자 계정만 사진을 올리거나 지울 수 있습니다.
@@ -29,8 +29,8 @@
   </div>
 
   <div id="panel" hidden>
-    <h1>내부 공간 사진</h1>
-    <p class="sub">홈페이지 "내부 공간" 칸에서 천천히 흐르는 사진입니다. 앞에서부터 6장까지 보입니다.</p>
+    <h1>메뉴 사진</h1>
+    <p class="sub">홈페이지 "메뉴" 칸에서 천천히 흐르는 커피 사진입니다. 앞에서부터 20장까지 보이고, 화살표로 넘겨 볼 수 있습니다.</p>
     <p class="count" id="count"></p>
 
     <div class="drop" id="drop">
@@ -41,7 +41,7 @@
       <p class="msg" id="msg"></p>
     </div>
 
-    <p class="cap-note">7장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
+    <p class="cap-note">21장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
       순서는 ↑ ↓ 로 바꾸고, ✕ 로 지웁니다.</p>
 
     <div class="items" id="items"></div>
@@ -53,7 +53,7 @@
   </div>
 
 </div>
-<script>window.ADMIN = { key: 'interior', max: 6, maxEdge: 640, quality: 0.72 };</script>
+<script>window.ADMIN = { key: 'menu', max: 20, maxEdge: 640, quality: 0.72 };</script>
 <script type="module" src="assets/admin.js"></script>
 </body>
 </html>
