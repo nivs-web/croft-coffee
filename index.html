@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>크로프트 커피 croft coffee · 속초 핸드드립 로스터리</title>
+<meta name="description" content="속초 등대해변 골목, 옛 쌀가게를 고친 핸드드립 로스터리. 손으로 내린 커피를 하나뿐인 골동품 잔에 담아 드립니다. 매일 11:00~18:00.">
+<meta name="theme-color" content="#1B120A">
+<!-- DEPLOY STEP: patch og:url and og:image with the live absolute URL before zipping -->
+<meta property="og:title" content="크로프트 커피 croft coffee">
+<meta property="og:description" content="속초 등대해변 골목의 핸드드립 로스터리. 커피만 합니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="PLACEHOLDER_URL">
+<meta property="og:image" content="PLACEHOLDER_IMAGE">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231B120A'/%3E%3Cg stroke='%23F2E9D8' stroke-width='1.4' fill='none'%3E%3Cpath d='M16 4 L16 28 M4 16 L28 16 M7.5 7.5 L24.5 24.5 M24.5 7.5 L7.5 24.5'/%3E%3Cpath d='M16 4 L20 16 L16 28 L12 16 Z M4 16 L16 12 L28 16 L16 20 Z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script>document.documentElement.className += ' js';</script>
+</head>
+<body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+
+<div class="env" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="주 메뉴">
+  <a class="nav-brand" href="#top">croft coffee</a>
+  <div class="nav-links">
+    <a href="#philosophy">철학</a>
+    <a href="#coffee">커피</a>
+    <a href="#space">공간</a>
+    <a href="#faq">안내</a>
+    <a href="#instagram">인스타그램</a>
+    <a class="nav-cta" href="#visit">길 찾기</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-stage" id="heroStage">
+    <div class="poster" aria-hidden="true"></div>
+    <video id="heroVideo" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+    <div class="scrim" aria-hidden="true"></div>
+    <svg class="ring" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="3"
+              stroke-dasharray="126" style="stroke-dashoffset:var(--ld,126)"/>
+    </svg>
+
+    <div class="band band-1" data-band="0,0.15" data-entrance="drift">
+      <h1 class="split">커피만 합니다.</h1>
+      <p class="script-line" lang="en">croft coffee · sokcho</p>
+    </div>
+    <div class="band band-2" data-band="0.17,0.36" data-entrance="drift">
+      <p class="band-line split">한 방울, 또 한 방울. 서두르지 않습니다.</p>
+    </div>
+    <div class="band band-3" data-band="0.38,0.58" data-entrance="scatter" data-spread="0.4">
+      <p class="band-line split">옛 쌀가게였던 집에서, 하나뿐인 골동품 잔에 담습니다.</p>
+    </div>
+    <div class="band band-4" data-band="0.60,0.80" data-entrance="blur">
+      <p class="band-line">여행과 여행 사이, 조용한 쉼표.</p>
+    </div>
+    <div class="band band-5" data-band="0.82,1" data-entrance="settle">
+      <p class="script-title" lang="en">croft coffee</p>
+      <h2 class="split settle-head">속초, 등대해변 골목의 핸드드립 로스터리</h2>
+      <p class="settle-sub chip">매일 11:00~18:00 · 화요일은 17:00까지</p>
+      <div class="settle-cta">
+        <a class="btn" href="#visit">길 찾기</a>
+      </div>
+    </div>
+
+    <div class="cue" aria-hidden="true">
+      <span class="cue-text">천천히 내려 보세요</span>
+    </div>
+    <button class="step-btn" id="stepBtn" type="button" aria-label="다음 장면 보기">
+      <span class="step-chevron" aria-hidden="true"></span>
+    </button>
+    <button class="replay-btn" id="replayBtn" type="button" aria-label="처음부터 다시 재생" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5a7 7 0 1 0 7 7" fill="none" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M12 1.6 L12 8.4 L7.6 5 Z" stroke="none"/>
+      </svg>
+    </button>
+    <button class="tap-play" id="tapPlay" type="button" aria-label="영상 재생" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 L18.5 12 L9 18.5 Z"/></svg>
+    </button>
+  </div>
+
+  <div class="static-hero" aria-hidden="false">
+    <div class="static-inner">
+      <button class="static-play" id="staticPlay" type="button" aria-label="영상으로 보기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 L18.5 12 L9 18.5 Z"/></svg>
+      </button>
+      <h1>커피만 합니다.</h1>
+      <p class="static-sub">옛 쌀가게를 고친 속초의 핸드드립 로스터리. 손으로 내린 커피를 골동품 잔에 담아 드립니다.</p>
+      <p class="static-small">매일 11:00~18:00 · 화요일은 17:00까지</p>
+      <a class="btn" href="#visit">길 찾기</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <section class="section philosophy" id="philosophy">
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+        <g class="lattice" fill="none" stroke-linecap="round">
+          <path d="M100 2 L100 38 M82 20 L118 20 M88 8 L112 32 M112 8 L88 32"/>
+          <path d="M100 2 L106 20 L100 38 L94 20 Z"/>
+          <path d="M10 20 L82 20 M118 20 L190 20"/>
+        </g>
+        <circle class="node" cx="100" cy="20" r="2.4"/>
+      </svg>
+    </div>
+    <p class="kicker" lang="en">slowly, by hand</p>
+    <h2 class="section-title">천천히, 손으로</h2>
+    <div class="philosophy-grid">
+      <p class="lede" data-reveal>크로프트는 커피만 합니다. 시그니처 메뉴도, 디카페인도, 서두름도 없습니다. 등대해변 골목의 옛 쌀가게에서, 그날의 원두를 손으로 내려 하나뿐인 골동품 잔에 담습니다. 자리는 많지 않고, 시간은 천천히 갑니다. 그게 전부이고, 그거면 충분합니다.</p>
+      <figure class="philosophy-figure">
+        <picture>
+          <source type="image/webp" sizes="(max-width: 900px) 88vw, 500px"
+                  srcset="assets/hero-ending-640.webp 640w, assets/hero-ending-1280.webp 1280w">
+          <img src="assets/hero-ending-640.jpg" sizes="(max-width: 900px) 88vw, 500px"
+               srcset="assets/hero-ending-640.jpg 640w, assets/hero-ending-1280.jpg 1280w"
+               width="1280" height="720" alt="크로프트의 골동품 잔에 담긴 커피 한 잔"
+               loading="lazy" decoding="async">
+        </picture>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section coffee" id="coffee">
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+        <g class="lattice" fill="none" stroke-linecap="round">
+          <path d="M100 2 L100 38 M82 20 L118 20 M88 8 L112 32 M112 8 L88 32"/>
+          <path d="M100 2 L106 20 L100 38 L94 20 Z"/>
+          <path d="M10 20 L82 20 M118 20 L190 20"/>
+        </g>
+        <circle class="node" cx="100" cy="20" r="2.4"/>
+      </svg>
+    </div>
+    <p class="kicker" lang="en">three, and the beans</p>
+    <h2 class="section-title">세 가지, 그리고 원두</h2>
+    <div class="cards">
+      <article class="card">
+        <figure>
+          <picture>
+            <source type="image/webp" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                    srcset="assets/still-handdrip-640.webp 640w, assets/still-handdrip-1280.webp 1280w">
+            <img src="assets/still-handdrip-640.jpg" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                 srcset="assets/still-handdrip-640.jpg 640w, assets/still-handdrip-1280.jpg 1280w"
+                 width="1280" height="714" alt="핸드드립을 내리는 모습" loading="lazy" decoding="async">
+          </picture>
+        </figure>
+        <h3 class="part">핸드드립</h3>
+        <p class="part">그날의 싱글 오리진을 손으로 내립니다. 가장 크로프트다운 한 잔.</p>
+      </article>
+      <article class="card">
+        <figure>
+          <picture>
+            <source type="image/webp" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                    srcset="assets/still-espresso-640.webp 640w, assets/still-espresso-1280.webp 1280w">
+            <img src="assets/still-espresso-640.jpg" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                 srcset="assets/still-espresso-640.jpg 640w, assets/still-espresso-1280.jpg 1280w"
+                 width="1280" height="714" alt="골동품 잔에 담긴 클래식 에스프레소" loading="lazy" decoding="async">
+          </picture>
+        </figure>
+        <h3 class="part">클래식 에스프레소</h3>
+        <p class="part">옛날식 그대로, 진하고 단정하게.</p>
+      </article>
+      <article class="card">
+        <figure>
+          <picture>
+            <source type="image/webp" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                    srcset="assets/still-coldbrew-640.webp 640w, assets/still-coldbrew-1280.webp 1280w">
+            <img src="assets/still-coldbrew-640.jpg" sizes="(max-width: 900px) min(92vw, 440px), 330px"
+                 srcset="assets/still-coldbrew-640.jpg 640w, assets/still-coldbrew-1280.jpg 1280w"
+                 width="1280" height="714" alt="콜드 브루 한 잔" loading="lazy" decoding="async">
+          </picture>
+        </figure>
+        <h3 class="part">콜드 브루</h3>
+        <p class="part">차갑게, 그러나 여전히 천천히.</p>
+      </article>
+    </div>
+    <p class="retail-line" data-reveal>매장에서 직접 로스팅한 원두를 구입하실 수 있습니다.</p>
+  </section>
+
+  <section class="film2" id="brew" aria-label="한 잔이 내려지는 시간">
+    <div class="film2-stage" id="film2Stage">
+      <div class="film2-poster" aria-hidden="true"></div>
+      <video id="film2Video" preload="none" muted playsinline loop aria-hidden="true" tabindex="-1"></video>
+      <div class="scrim" aria-hidden="true"></div>
+      <div class="f2band f2band-1">
+        <p class="f2kicker" lang="en">one cup, slowly</p>
+        <p class="f2line">한 잔이 내려지는 시간.</p>
+      </div>
+      <div class="f2band f2band-2">
+        <p class="f2line">그동안, 아무것도 서두르지 않습니다.</p>
+      </div>
+      <div class="f2band f2band-3">
+        <p class="f2line">이제, 진짜 한 잔 하러 오세요.</p>
+        <a class="btn" href="#visit">길 찾기</a>
+      </div>
+      <div class="f2static" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="section space" id="space">
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+        <g class="lattice" fill="none" stroke-linecap="round">
+          <path d="M100 2 L100 38 M82 20 L118 20 M88 8 L112 32 M112 8 L88 32"/>
+          <path d="M100 2 L106 20 L100 38 L94 20 Z"/>
+          <path d="M10 20 L82 20 M118 20 L190 20"/>
+        </g>
+        <circle class="node" cx="100" cy="20" r="2.4"/>
+      </svg>
+    </div>
+    <p class="kicker" lang="en">a room where time stopped</p>
+    <h2 class="section-title">시간이 멈춘 방</h2>
+    <div class="space-grid">
+      <figure class="space-figure">
+        <picture>
+          <source type="image/webp" sizes="(max-width: 900px) 88vw, 570px"
+                  srcset="assets/still-space-640.webp 640w, assets/still-space-1280.webp 1280w">
+          <img src="assets/still-space-640.jpg" sizes="(max-width: 900px) 88vw, 570px"
+               srcset="assets/still-space-640.jpg 640w, assets/still-space-1280.jpg 1280w"
+               width="1280" height="858" alt="골동품 잔이 놓인 크로프트의 나무 카운터"
+               loading="lazy" decoding="async">
+        </picture>
+      </figure>
+      <p class="lede" data-reveal>스테인드글라스 조명, 나무 격자창, 주인장이 하나씩 모은 골동품 잔. 1950년대에 지어진 집의 결을 그대로 두었습니다. 조용히 머물다 가시라고, 노키즈존으로 운영합니다.</p>
+    </div>
+  </section>
+
+  <section class="section faq" id="faq">
+    <p class="kicker" lang="en">honest notes</p>
+    <h2 class="section-title">솔직한 안내</h2>
+    <dl class="faq-list">
+      <div class="faq-item part">
+        <dt>커피 말고 다른 음료도 있나요?</dt>
+        <dd>아니요, 커피만 합니다. 논커피 음료와 디카페인 원두는 없습니다.</dd>
+      </div>
+      <div class="faq-item part">
+        <dt>아이와 함께 가도 되나요?</dt>
+        <dd>조용한 공간을 위해 노키즈존으로 운영하고 있습니다. 양해 부탁드립니다.</dd>
+      </div>
+      <div class="faq-item part">
+        <dt>자리가 많은가요?</dt>
+        <dd>작은 집이라 자리가 많지 않습니다. 한적한 시간에 오시면 더 느긋하게 머무실 수 있습니다.</dd>
+      </div>
+      <div class="faq-item part">
+        <dt>주차는 어디에 하나요?</dt>
+        <dd>등대해수욕장 노상주차장을 이용하시면 걸어서 금방입니다.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="section insta" id="instagram">
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+        <g class="lattice" fill="none" stroke-linecap="round">
+          <path d="M100 2 L100 38 M82 20 L118 20 M88 8 L112 32 M112 8 L88 32"/>
+          <path d="M100 2 L106 20 L100 38 L94 20 Z"/>
+          <path d="M10 20 L82 20 M118 20 L190 20"/>
+        </g>
+        <circle class="node" cx="100" cy="20" r="2.4"/>
+      </svg>
+    </div>
+    <p class="kicker" lang="en">follow along</p>
+    <h2 class="section-title">인스타그램</h2>
+    <p class="insta-sub" data-reveal>속초의 하루와 오늘의 원두를 올립니다. <a class="insta-handle" href="https://www.instagram.com/croft_coffee" target="_blank" rel="noopener">@croft_coffee</a></p>
+    <div class="insta-grid" id="instaGrid" hidden></div>
+    <div class="insta-fallback" id="instaFallback">
+      <a class="btn btn-quiet" href="https://www.instagram.com/croft_coffee" target="_blank" rel="noopener">인스타그램에서 보기</a>
+    </div>
+  </section>
+
+  <section class="section visit" id="visit">
+    <div class="divider" aria-hidden="true">
+      <svg viewBox="0 0 200 40" preserveAspectRatio="xMidYMid meet">
+        <g class="lattice" fill="none" stroke-linecap="round">
+          <path d="M100 2 L100 38 M82 20 L118 20 M88 8 L112 32 M112 8 L88 32"/>
+          <path d="M100 2 L106 20 L100 38 L94 20 Z"/>
+          <path d="M10 20 L82 20 M118 20 L190 20"/>
+        </g>
+        <circle class="node" cx="100" cy="20" r="2.4"/>
+      </svg>
+    </div>
+    <p class="kicker" lang="en">find your way</p>
+    <h2 class="section-title">오시는 길</h2>
+    <div class="visit-card">
+      <dl class="visit-info">
+        <div><dt>주소</dt><dd>강원도 속초시 영랑해안5길 15</dd></div>
+        <div><dt>시간</dt><dd>매일 11:00~18:00 · 화요일은 17:00까지</dd></div>
+        <div><dt>안내</dt><dd>노키즈존 · 좌석이 적습니다</dd></div>
+      </dl>
+      <div class="visit-actions">
+        <a class="btn" href="https://map.naver.com/p/search/%ED%81%AC%EB%A1%9C%ED%94%84%ED%8A%B8%EC%BB%A4%ED%94%BC%20%EC%86%8D%EC%B4%88" target="_blank" rel="noopener">네이버 지도에서 길 찾기</a>
+        <a class="btn btn-quiet" href="https://www.instagram.com/croft_coffee" target="_blank" rel="noopener">인스타그램</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p><span class="footer-script" lang="en">croft coffee</span> · 강원도 속초시 영랑해안5길 15 · © 2026 croft coffee</p>
+</footer>
+
+<button class="pager" id="pager" type="button" aria-label="다음 섹션으로">
+  <span class="pager-chevron" aria-hidden="true"></span>
+</button>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
