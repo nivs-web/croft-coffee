@@ -876,8 +876,30 @@ function loadPhotos(key, cb) {
 
   var built = false;
   function boot() { if (!built) { built = true; build(); } }
-  new IntersectionObserver(function (e) { if (e[0].isIntersecting) boot(); },
-    { rootMargin: '200px 0px' }).observe(lane);
+  var asked = false;
+  new IntersectionObserver(function (e) {
+    if (!e[0].isIntersecting) return;
+    boot();
+    /* the photo data is only fetched once the visitor is nearly here, so the
+       first screen never carries it */
+    if (asked) return;
+    asked = true;
+    loadPhotos('interior', function (rows) {
+      track.textContent = '';
+      rows.slice(0, MAX).forEach(function (r) {
+        var wrap = document.createElement(r.link ? 'a' : 'span');
+        wrap.className = 'ig-item';
+        if (r.link) { wrap.href = r.link; wrap.target = '_blank'; wrap.rel = 'noopener'; }
+        var img = document.createElement('img');
+        img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+        wrap.appendChild(img);
+        track.appendChild(wrap);
+      });
+      built = false;
+      lane.classList.remove('run');
+      boot();
+    });
+  }, { rootMargin: '400px 0px' }).observe(lane);
   new IntersectionObserver(function (e) {
     if (built) lane.classList.toggle('run', e[0].isIntersecting);
   }, { threshold: 0 }).observe(lane);
@@ -889,21 +911,6 @@ function loadPhotos(key, cb) {
     rebuild = setTimeout(build, 300);
   });
 
-  loadPhotos('interior', function (rows) {
-    track.textContent = '';
-    rows.slice(0, MAX).forEach(function (r) {
-      var wrap = document.createElement(r.link ? 'a' : 'span');
-      wrap.className = 'ig-item';
-      if (r.link) { wrap.href = r.link; wrap.target = '_blank'; wrap.rel = 'noopener'; }
-      var img = document.createElement('img');
-      img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
-      wrap.appendChild(img);
-      track.appendChild(wrap);
-    });
-    built = false;
-    lane.classList.remove('run');
-    boot();
-  });
 })();
 
 /* ---------- the instagram wall: a still grid that arrives in sequence ---------- */
@@ -926,23 +933,29 @@ function loadPhotos(key, cb) {
   }, { threshold: 0.04 });
   obs.observe(grid);
 
-  loadPhotos('insta', function (rows) {
-    grid.textContent = '';
-    rows.slice(0, MAX).forEach(function (r) {
-      var a = document.createElement('a');
-      a.className = 'ig-tile';
-      a.href = r.link || 'https://www.instagram.com/croft_coffee';
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.setAttribute('aria-label', '인스타그램에서 보기');
-      var img = document.createElement('img');
-      img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
-      a.appendChild(img);
-      grid.appendChild(a);
+  /* same deferral: the wall's photos are fetched only as it comes into range */
+  var asked = false;
+  new IntersectionObserver(function (e) {
+    if (!e[0].isIntersecting || asked) return;
+    asked = true;
+    loadPhotos('insta', function (rows) {
+      grid.textContent = '';
+      rows.slice(0, MAX).forEach(function (r) {
+        var a = document.createElement('a');
+        a.className = 'ig-tile';
+        a.href = r.link || 'https://www.instagram.com/croft_coffee';
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.setAttribute('aria-label', '인스타그램에서 보기');
+        var img = document.createElement('img');
+        img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+        a.appendChild(img);
+        grid.appendChild(a);
+      });
+      stagger();
+      grid.classList.add('in', 'settled');
     });
-    stagger();
-    grid.classList.add('in', 'settled');
-  });
+  }, { rootMargin: '400px 0px' }).observe(grid);
 })();
 /* ---------- pause the living layer on hidden tabs ---------- */
 document.addEventListener('visibilitychange', function () {
