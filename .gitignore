@@ -1,0 +1,17 @@
+# Only the deployable site belongs in this repository.
+# Work byproducts (raw generations, review copies, snapshots, test screenshots)
+# live outside this folder and must never be committed.
+review/
+selftest/
+snapshot-*/
+*-raw.mp4
+*-raw.png
+frame-*.jpg
+bf-*.jpg
+loop-*.jpg
+q-*.jpg
+
+# OS and editor noise
+Thumbs.db
+.DS_Store
+*.swp

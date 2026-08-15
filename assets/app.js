@@ -629,12 +629,9 @@ pager.addEventListener('click', function () {
   if (pagerAtEnd) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
   var y = window.scrollY;
   var heroEnd = hero.offsetHeight;
-  if (y < heroEnd - 12) {
-    if (MOBILE_HERO) { window.scrollTo({ top: heroEnd, behavior: 'smooth' }); return; }
-    var p = heroProgress();
-    for (var s = 0; s < stops.length; s++) {
-      if (stops[s] > p + 0.03) { animateToP(stops[s], 900); return; }
-    }
+  /* the touch cinema plays on its own clock, so the button simply leaves it.
+     On desktop the button does not exist until the film has played out. */
+  if (MOBILE_HERO && y < heroEnd - 12) {
     window.scrollTo({ top: heroEnd, behavior: 'smooth' });
     return;
   }
@@ -645,6 +642,7 @@ pager.addEventListener('click', function () {
   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 });
 var pagerRaf = null;
+var pagerShown = null;
 function updatePager() {
   if (pagerRaf !== null) return;
   pagerRaf = requestAnimationFrame(function () {
@@ -655,9 +653,12 @@ function updatePager() {
       pager.classList.toggle('up', end);
       pager.setAttribute('aria-label', end ? '맨 위로' : '다음으로');
     }
+    /* desktop scrolls the film itself, so the button stays out of the way
+       until the last frame has arrived; touch devices always have it */
+    var show = MOBILE_HERO ? true : (heroProgress() >= 0.995);
+    if (show !== pagerShown) { pagerShown = show; pager.classList.toggle('show', show); }
   });
 }
-pager.classList.add('show');
 addEventListener('scroll', updatePager, { passive: true });
 updatePager();
 

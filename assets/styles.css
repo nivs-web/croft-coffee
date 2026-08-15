@@ -37,7 +37,10 @@ body.legacy .hero-stage{display:none}
 body.legacy .static-hero{display:grid}
 body.legacy .static-play{display:none}
 
-img{max-width:100%;display:block}
+/* height:auto is required alongside max-width: without it, the width/height
+   attributes that reserve layout space also freeze the rendered height and
+   the picture stretches. */
+img{max-width:100%;height:auto;display:block}
 
 /* fixed background environment: one slow warm grain drift */
 .env{
@@ -196,7 +199,7 @@ img{max-width:100%;display:block}
   opacity:0;transition:opacity 1s var(--ease);
 }
 .cue.on{opacity:.8}
-.cue-text{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em}
+.cue-text{font-family:var(--mono);font-size:1.02rem;letter-spacing:.14em}
 
 /* the replay control (touch cinema only): a quiet round icon,
    appearing 1.5s after the film truly ends */
