@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내부 공간 사진 관리 · croft coffee</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231B120A'/%3E%3Cg stroke='%23F2E9D8' stroke-width='1.4' fill='none'%3E%3Cpath d='M16 4 L16 28 M4 16 L28 16 M7.5 7.5 L24.5 24.5 M24.5 7.5 L7.5 24.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Gowun+Dodum&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+<div class="wrap">
+
+  <div class="admin-head">
+    <a class="admin-brand" href="index.html">croft coffee</a>
+    <span class="admin-who" id="who"></span>
+  </div>
+
+  <div class="gate" id="gate" hidden>
+    <h1>관리자 전용</h1>
+    <p>내부 공간 사진을 관리하려면 구글 계정으로 로그인하세요.</p>
+    <button class="btn" id="loginBtn" type="button">구글로 로그인</button>
+    <p class="gate-note">등록된 관리자 계정만 사진을 올리거나 지울 수 있습니다.
+      다른 계정으로 로그인하면 목록은 보이지만 저장되지 않습니다.</p>
+  </div>
+
+  <div id="panel" hidden>
+    <h1>내부 공간 사진</h1>
+    <p class="sub">홈페이지 "내부 공간" 칸에서 천천히 흐르는 사진입니다. 앞에서부터 6장까지 보입니다.</p>
+    <p class="count" id="count"></p>
+
+    <div class="drop" id="drop">
+      <p>사진을 이 상자에 끌어다 놓으세요. 자동으로 정사각형 WebP로 바꿔서 올립니다.</p>
+      <button class="btn" id="pick" type="button">사진 고르기</button>
+      <input type="file" id="file" accept="image/*" multiple>
+      <div class="bar" id="bar"><span id="barFill"></span></div>
+      <p class="msg" id="msg"></p>
+    </div>
+
+    <p class="cap-note">7장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
+      순서는 ↑ ↓ 로 바꾸고, ✕ 로 지웁니다.</p>
+
+    <div class="items" id="items"></div>
+
+    <p style="margin-top:34px">
+      <a class="btn btn-quiet btn-sm" href="update_insta.html">인스타그램 사진 관리로</a>
+      <button class="btn btn-quiet btn-sm" id="logoutBtn" type="button">로그아웃</button>
+    </p>
+  </div>
+
+</div>
+<script>window.ADMIN = { key: 'interior', max: 6, maxEdge: 1200 };</script>
+<script type="module" src="assets/admin.js"></script>
+</body>
+</html>

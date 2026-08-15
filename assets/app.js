@@ -825,9 +825,26 @@ function scheduleMagnet() {
 }
 if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
 
+/* ---------- photos managed from the admin pages ----------
+   One small REST read each, no Firebase SDK on the visitor's page. If the
+   read fails or the list is empty, the photos already in the HTML stay. */
+var DB = 'https://croft-coffee-default-rtdb.asia-southeast1.firebasedatabase.app';
+function loadPhotos(key, cb) {
+  fetch(DB + '/' + key + '.json', { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (data) {
+      if (!data) return;
+      var rows = Object.keys(data).map(function (id) { return data[id]; })
+        .filter(function (r) { return r && r.url; })
+        .sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+      if (rows.length) cb(rows);
+    })
+    .catch(function () { /* the built-in photos carry the section */ });
+}
+
 /* ---------- the interior lane: the slow drift, capped at six photos ----------
-   The photos in the HTML are the set. It is repeated until it outruns the
-   screen, then a second copy is laid after it so the loop point never shows. */
+   The set is repeated until it outruns the screen, then a second copy is laid
+   after it so the loop point can never show. */
 (function () {
   var lane = document.getElementById('interiorMarquee');
   var track = document.getElementById('interiorTrack');
@@ -835,10 +852,8 @@ if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
   var MAX = parseInt(lane.getAttribute('data-max'), 10) || 6;
 
   function build() {
-    var kids = [].slice.call(track.children);
-    kids.forEach(function (n) { if (n.dataset.clone) n.remove(); });
+    [].slice.call(track.children).forEach(function (n) { if (n.dataset.clone) n.remove(); });
     var base = [].slice.call(track.children);
-    /* anything past the cap never shows */
     base.slice(MAX).forEach(function (n) { n.style.display = 'none'; });
     base = base.slice(0, MAX);
     if (!base.length) return;
@@ -860,11 +875,9 @@ if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
   }
 
   var built = false;
-  new IntersectionObserver(function (e) {
-    if (!e[0].isIntersecting || built) return;
-    built = true;
-    build();
-  }, { rootMargin: '200px 0px' }).observe(lane);
+  function boot() { if (!built) { built = true; build(); } }
+  new IntersectionObserver(function (e) { if (e[0].isIntersecting) boot(); },
+    { rootMargin: '200px 0px' }).observe(lane);
   new IntersectionObserver(function (e) {
     if (built) lane.classList.toggle('run', e[0].isIntersecting);
   }, { threshold: 0 }).observe(lane);
@@ -875,15 +888,36 @@ if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
     clearTimeout(rebuild);
     rebuild = setTimeout(build, 300);
   });
+
+  loadPhotos('interior', function (rows) {
+    track.textContent = '';
+    rows.slice(0, MAX).forEach(function (r) {
+      var wrap = document.createElement(r.link ? 'a' : 'span');
+      wrap.className = 'ig-item';
+      if (r.link) { wrap.href = r.link; wrap.target = '_blank'; wrap.rel = 'noopener'; }
+      var img = document.createElement('img');
+      img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+      wrap.appendChild(img);
+      track.appendChild(wrap);
+    });
+    built = false;
+    lane.classList.remove('run');
+    boot();
+  });
 })();
 
 /* ---------- the instagram wall: a still grid that arrives in sequence ---------- */
 (function () {
   var grid = document.getElementById('igGrid');
   if (!grid) return;
-  [].slice.call(grid.children).forEach(function (n, i) {
-    n.style.setProperty('--d', (Math.min(i, 11) * 40) + 'ms');
-  });
+  var MAX = parseInt(grid.getAttribute('data-max'), 10) || 20;
+
+  function stagger() {
+    [].slice.call(grid.children).forEach(function (n, i) {
+      n.style.setProperty('--d', (Math.min(i, 11) * 40) + 'ms');
+    });
+  }
+  stagger();
   var obs = new IntersectionObserver(function (e) {
     if (!e[0].isIntersecting) return;
     grid.classList.add('in');
@@ -891,8 +925,25 @@ if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
     setTimeout(function () { grid.classList.add('settled'); }, 1400);
   }, { threshold: 0.04 });
   obs.observe(grid);
-})();
 
+  loadPhotos('insta', function (rows) {
+    grid.textContent = '';
+    rows.slice(0, MAX).forEach(function (r) {
+      var a = document.createElement('a');
+      a.className = 'ig-tile';
+      a.href = r.link || 'https://www.instagram.com/croft_coffee';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.setAttribute('aria-label', '인스타그램에서 보기');
+      var img = document.createElement('img');
+      img.src = r.url; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
+      a.appendChild(img);
+      grid.appendChild(a);
+    });
+    stagger();
+    grid.classList.add('in', 'settled');
+  });
+})();
 /* ---------- pause the living layer on hidden tabs ---------- */
 document.addEventListener('visibilitychange', function () {
   document.body.classList.toggle('paused', document.hidden);
