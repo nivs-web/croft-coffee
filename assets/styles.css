@@ -527,79 +527,73 @@ main{position:relative;z-index:2;background:var(--canvas)}
 .faq-item dt{font-family:var(--display);font-size:1.06rem}
 .faq-item dd{color:var(--text-secondary);margin-top:10px;max-width:56ch}
 
-/* ---------- instagram: one slow lane of photos, edge to edge ----------
-   90 seconds a lap is about 25px a second: it reads as drifting, not sliding.
-   Hovering stops it, and it rests entirely while off screen. */
-.insta{padding-bottom:34px}
+/* ---------- the interior lane: the same slow drift, half again as large ----------
+   90 seconds a lap. Hovering stops it, and hovering a photo sharpens it. */
+.interior{padding-bottom:30px}
+.interior-sub{color:var(--text-secondary);margin-top:14px}
 .ig-marquee{
-  position:relative;z-index:2;overflow:hidden;
-  padding:4px 0 0;
+  position:relative;z-index:2;overflow:hidden;padding:4px 0 0;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
   mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
 }
-.ig-track{display:flex;gap:14px;width:max-content;will-change:transform}
+.ig-track{display:flex;gap:16px;width:max-content;will-change:transform}
 .ig-marquee.run .ig-track{animation:igFlow 90s linear infinite}
 .ig-marquee.run:hover .ig-track,
 .ig-marquee.run:focus-within .ig-track{animation-play-state:paused}
-@keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 7px),0,0)}}
+@keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 8px),0,0)}}
 
 .ig-item{
   position:relative;display:block;flex:0 0 auto;
-  width:230px;aspect-ratio:1/1;overflow:hidden;border-radius:12px;
+  width:345px;aspect-ratio:1/1;overflow:hidden;border-radius:14px;
   background:var(--panel);border:1px solid rgba(188,169,142,.12);
 }
-.ig-item img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease-out),opacity .5s var(--ease)}
-.ig-item::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:rgba(27,18,10,.28);transition:background .45s var(--ease);
+/* resting a touch quiet, and brighter and sharper under the cursor */
+.ig-item img,.ig-tile img{
+  width:100%;height:100%;object-fit:cover;
+  filter:saturate(.88) brightness(.9);
+  transition:transform .7s var(--ease-out),filter .4s var(--ease);
 }
-.ig-marquee:hover .ig-item::after{background:rgba(27,18,10,.42)}
-.ig-item:hover::after{background:rgba(27,18,10,0)}
-.ig-item:hover img{transform:scale(1.05)}
+.ig-item:hover img,.ig-tile:hover img,.ig-tile:focus-visible img{
+  filter:saturate(1.1) brightness(1.08) contrast(1.05);
+  transform:scale(1.06);
+}
+
+/* ---------- the instagram wall: twenty photos, no motion, all at once ---------- */
+.ig-grid-wrap{max-width:1180px;margin:0 auto;padding:34px 6vw 0}
+.ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ig-tile{
+  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:12px;
+  background:var(--panel);border:1px solid rgba(188,169,142,.12);
+  transition:border-color .35s var(--ease),box-shadow .35s var(--ease);
+}
+.ig-tile:hover{border-color:rgba(188,169,142,.34);box-shadow:0 12px 34px rgba(0,0,0,.45)}
+/* the twenty-first photo and beyond never show */
+.ig-grid .ig-tile:nth-child(n+21){display:none}
+.fx .ig-tile{opacity:0;transform:translateY(14px)}
+.fx .ig-grid.in .ig-tile{
+  opacity:1;transform:translateY(0);
+  transition:opacity .6s var(--ease-out) var(--d,0ms),transform .6s var(--ease-out) var(--d,0ms);
+}
+.ig-grid.settled .ig-tile{transition-delay:0ms}
 
 .ig-cta{
-  display:block;width:max-content;margin:22px auto 0;
+  display:block;width:max-content;margin:30px auto 0;
   font-family:var(--mono);font-size:.86rem;color:var(--text-secondary);
   text-decoration:none;border-bottom:1px solid var(--accent-muted);padding-bottom:3px;
   transition:color .3s var(--ease),border-color .3s var(--ease);
 }
 .ig-cta:hover{color:var(--text-primary);border-color:var(--accent)}
 
-@media (max-width:820px),(pointer:coarse){
-  .ig-item{width:170px;border-radius:10px}
-  .ig-track{gap:10px}
-  .ig-marquee.run .ig-track{animation-duration:70s}
-  @keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 5px),0,0)}}
-}
-
-/* instagram (feed grid, used when a live feed is connected) */
 .insta-sub{color:var(--text-secondary);margin-top:14px}
 .insta-handle{color:var(--accent);text-decoration:none;transition:color .3s var(--ease)}
 .insta-handle:hover{color:var(--accent-hover);text-decoration:underline}
-.insta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:40px}
-.insta-grid a{
-  position:relative;display:block;aspect-ratio:1/1;overflow:hidden;border-radius:10px;
-  background:var(--panel);
-}
-.insta-grid img{
-  width:100%;height:100%;object-fit:cover;
-  transition:transform .9s var(--ease-out);
-}
-.insta-grid a::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:rgba(27,18,10,0);transition:background .4s var(--ease);
-}
-.insta-grid a:hover img{transform:scale(1.05)}
-.insta-grid a:hover::after{background:rgba(27,18,10,.18)}
-.insta-fallback{margin-top:36px}
-.fx .insta-grid a{opacity:0;transform:translateY(14px)}
-.fx .insta-grid.in a{
-  opacity:1;transform:translateY(0);
-  transition:opacity .7s var(--ease-out) var(--d,0ms),transform .7s var(--ease-out) var(--d,0ms);
-}
-.insta-grid.settled a{transition-delay:0ms}
-@media (max-width: 1024px){
-  .insta-grid{grid-template-columns:repeat(2,1fr)}
+
+@media (max-width:820px),(pointer:coarse){
+  .ig-item{width:255px;border-radius:12px}
+  .ig-track{gap:12px}
+  @keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 6px),0,0)}}
+  .ig-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .ig-grid-wrap{padding:26px 4vw 0}
 }
 
 /* visit */

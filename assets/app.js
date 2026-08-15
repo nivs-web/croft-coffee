@@ -825,27 +825,26 @@ function scheduleMagnet() {
 }
 if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
 
-/* ---------- instagram: the slow lane ----------
-   The photos in the HTML are the starting set. When a Behold feed URL is set,
-   the real posts replace them. Either way the lane is built the same: repeat
-   the set until it is wider than the screen, then lay a second copy after it
-   so the loop point can never show. */
-var INSTA_FEED_URL = ''; /* paste the Behold JSON feed URL here for live posts */
-var INSTA_MAX = 12;
+/* ---------- the interior lane: the slow drift, capped at six photos ----------
+   The photos in the HTML are the set. It is repeated until it outruns the
+   screen, then a second copy is laid after it so the loop point never shows. */
 (function () {
-  var lane = document.getElementById('igMarquee');
-  var track = document.getElementById('igTrack');
+  var lane = document.getElementById('interiorMarquee');
+  var track = document.getElementById('interiorTrack');
   if (!lane || !track) return;
+  var MAX = parseInt(lane.getAttribute('data-max'), 10) || 6;
 
   function build() {
-    var base = [].slice.call(track.children).filter(function (n) { return !n.dataset.clone; });
+    var kids = [].slice.call(track.children);
+    kids.forEach(function (n) { if (n.dataset.clone) n.remove(); });
+    var base = [].slice.call(track.children);
+    /* anything past the cap never shows */
+    base.slice(MAX).forEach(function (n) { n.style.display = 'none'; });
+    base = base.slice(0, MAX);
     if (!base.length) return;
-    [].slice.call(track.children).forEach(function (n) { if (n.dataset.clone) n.remove(); });
-    /* item widths come from CSS, not from the pictures, so this needs no wait */
-    var gap = parseFloat(getComputedStyle(track).columnGap) || 14;
+    var gap = parseFloat(getComputedStyle(track).columnGap) || 16;
     var one = base.reduce(function (w, n) { return w + n.getBoundingClientRect().width + gap; }, 0);
     if (one < 40) return;
-    /* one set must outrun the widest screen, then the whole set is doubled */
     var repeats = Math.max(1, Math.ceil((window.innerWidth + 400) / one));
     var frag = document.createDocumentFragment();
     for (var r = 0; r < repeats * 2 - 1; r++) {
@@ -853,7 +852,6 @@ var INSTA_MAX = 12;
         var c = n.cloneNode(true);
         c.dataset.clone = '1';
         c.setAttribute('aria-hidden', 'true');
-        c.setAttribute('tabindex', '-1');
         frag.appendChild(c);
       });
     }
@@ -862,18 +860,13 @@ var INSTA_MAX = 12;
   }
 
   var built = false;
-  function boot() {
-    if (built) return;
+  new IntersectionObserver(function (e) {
+    if (!e[0].isIntersecting || built) return;
     built = true;
     build();
-  }
-  /* build only when the lane is near, and rest the animation while it is away */
-  new IntersectionObserver(function (e) {
-    if (e[0].isIntersecting) boot();
   }, { rootMargin: '200px 0px' }).observe(lane);
   new IntersectionObserver(function (e) {
-    if (!built) return;
-    lane.classList.toggle('run', e[0].isIntersecting);
+    if (built) lane.classList.toggle('run', e[0].isIntersecting);
   }, { threshold: 0 }).observe(lane);
 
   var rebuild = null;
@@ -882,35 +875,22 @@ var INSTA_MAX = 12;
     clearTimeout(rebuild);
     rebuild = setTimeout(build, 300);
   });
+})();
 
-  if (!INSTA_FEED_URL) return;
-  fetch(INSTA_FEED_URL).then(function (r) {
-    if (!r.ok) throw new Error('feed unavailable');
-    return r.json();
-  }).then(function (data) {
-    var posts = (Array.isArray(data) ? data : (data.posts || [])).slice(0, INSTA_MAX);
-    if (!posts.length) return;
-    track.textContent = '';
-    posts.forEach(function (p) {
-      var a = document.createElement('a');
-      a.className = 'ig-item';
-      a.href = p.permalink || 'https://www.instagram.com/croft_coffee';
-      a.target = '_blank';
-      a.rel = 'noopener';
-      a.setAttribute('aria-label', '인스타그램 게시물 열기');
-      var img = document.createElement('img');
-      img.loading = 'lazy';
-      img.decoding = 'async';
-      var sized = p.sizes && (p.sizes.medium || p.sizes.small);
-      img.src = (p.mediaType === 'VIDEO' && p.thumbnailUrl) ? p.thumbnailUrl : (sized ? sized.mediaUrl : p.mediaUrl);
-      img.alt = '';
-      a.appendChild(img);
-      track.appendChild(a);
-    });
-    built = false;
-    lane.classList.remove('run');
-    boot();
-  }).catch(function () { /* the starting photos stay; the page is complete without a feed */ });
+/* ---------- the instagram wall: a still grid that arrives in sequence ---------- */
+(function () {
+  var grid = document.getElementById('igGrid');
+  if (!grid) return;
+  [].slice.call(grid.children).forEach(function (n, i) {
+    n.style.setProperty('--d', (Math.min(i, 11) * 40) + 'ms');
+  });
+  var obs = new IntersectionObserver(function (e) {
+    if (!e[0].isIntersecting) return;
+    grid.classList.add('in');
+    obs.disconnect();
+    setTimeout(function () { grid.classList.add('settled'); }, 1400);
+  }, { threshold: 0.04 });
+  obs.observe(grid);
 })();
 
 /* ---------- pause the living layer on hidden tabs ---------- */
