@@ -199,13 +199,21 @@ img{max-width:100%;height:auto;display:block}
 .band-5 .settle-sub{opacity:var(--ks,0)}
 .band-5 .script-title{opacity:var(--kt,0);transform:translateY(calc((1 - var(--kt,0))*-16px))}
 
+/* the pour lands in the middle of the frame, right where this line sits, so
+   it carries its own pool of dark and the same shadow the captions use */
 .cue{
   position:absolute;bottom:92px;left:50%;transform:translateX(-50%);
-  display:grid;justify-items:center;color:var(--text-secondary);
+  display:grid;justify-items:center;color:var(--text-primary);
   opacity:0;transition:opacity 1s var(--ease);
+  text-shadow:var(--tshadow);
 }
-.cue.on{opacity:.8}
-.cue-text{font-family:var(--mono);font-size:1.02rem;letter-spacing:.14em}
+.cue.on{opacity:.95}
+.cue::before{
+  content:"";position:absolute;inset:-150% -58%;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 50%,
+    rgba(5,5,10,.68) 0%,rgba(5,5,10,.44) 44%,rgba(5,5,10,0) 76%);
+}
+.cue-text{position:relative;font-family:var(--mono);font-size:1.18rem;letter-spacing:.14em}
 
 /* the replay control (touch cinema only): a quiet round icon,
    appearing 1.5s after the film truly ends */
