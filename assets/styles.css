@@ -651,6 +651,16 @@ body.motion-rich .map-pin::after{animation:pinPulse 3s var(--ease) infinite}
   background:linear-gradient(var(--canvas), #150d06);
 }
 .footer-script{font-family:var(--script);font-size:1.25rem;color:var(--text-primary)}
+/* the manager's way in. It has to look and behave exactly like the text
+   around it: same colour, no underline, no hand cursor, out of the tab order. */
+.footer-quiet{
+  color:inherit;text-decoration:none;cursor:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+.footer-quiet:hover,.footer-quiet:active,.footer-quiet:visited{
+  color:inherit;text-decoration:none;
+}
+.footer-quiet:focus{outline:none}
 
 /* living elements pause when tab hidden */
 body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused !important}
