@@ -1,0 +1,18 @@
+/* croft coffee · self-hosted webfonts, subset to the 404 characters
+   this site actually prints. The full Korean families run to 790KB across 46
+   files; these are the same faces with only the needed glyphs.
+   IMPORTANT: these hold only the glyphs listed in fonts/subset-chars.txt. Add
+   wording with a new character and it will render in a fallback face. To
+   regenerate, collect every character the pages print, then ask Google for
+   that exact set and save what it returns:
+     https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700
+       &family=Gowun+Dodum&family=Nanum+Gothic+Coding&family=Caveat:wght@600
+       &display=swap&text=<the characters, url encoded>
+   Request it with a current Chrome user agent so the reply is woff2.
+   Gowun Batang, Gowun Dodum, Nanum Gothic Coding and Caveat are all released
+   under the SIL Open Font License 1.1; see assets/fonts/OFL.txt. */
+@font-face{font-family:'Gowun Batang';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/GowunBatang-400.woff2) format('woff2')}
+@font-face{font-family:'Gowun Batang';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/GowunBatang-700.woff2) format('woff2')}
+@font-face{font-family:'Gowun Dodum';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/GowunDodum-400.woff2) format('woff2')}
+@font-face{font-family:'Nanum Gothic Coding';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/NanumGothicCoding-400.woff2) format('woff2')}
+@font-face{font-family:'Caveat';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/Caveat-600.woff2) format('woff2')}

@@ -695,7 +695,9 @@ function f2Update() {
       var f = Math.min(0.06, (b.b - b.a) / 3);
       var op = smoothstep(p, b.a, b.a + f) * (1 - smoothstep(p, b.b - f, b.b));
       if (i === 0) op = 1 - smoothstep(p, b.b - f, b.b);
-      if (i === f2Bands.length - 1) op = smoothstep(p, b.a, b.a + f);
+      /* the closing line lets go before the stage slides out, so it never
+         rides up behind the nav on the way past */
+      if (i === f2Bands.length - 1) op = smoothstep(p, b.a, b.a + f) * (1 - smoothstep(p, 0.9, 1));
       if (Math.abs(op - b.op) > 0.01 || (op > 0) !== (b.op > 0)) {
         b.op = op;
         b.el.style.opacity = op.toFixed(3);
@@ -829,17 +831,19 @@ if (!MOBILE_HERO) addEventListener('scroll', scheduleMagnet, { passive: true });
    One small REST read each, no Firebase SDK on the visitor's page. If the
    read fails or the list is empty, the photos already in the HTML stay. */
 var DB = 'https://croft-coffee-default-rtdb.asia-southeast1.firebasedatabase.app';
-function loadPhotos(key, cb) {
+/* No photo ships in the page any more, so nothing stale can flash before the
+   real ones land. Until they do the holders keep the layout still, and if
+   they never land the section folds away rather than sitting there empty. */
+function loadPhotos(key, cb, onNone) {
   fetch(DB + '/' + key + '.json', { cache: 'no-cache' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
-      if (!data) return;
-      var rows = Object.keys(data).map(function (id) { return data[id]; })
+      var rows = data ? Object.keys(data).map(function (id) { return data[id]; })
         .filter(function (r) { return r && r.url; })
-        .sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
-      if (rows.length) cb(rows);
+        .sort(function (a, b) { return (a.order || 0) - (b.order || 0); }) : [];
+      if (rows.length) cb(rows); else if (onNone) onNone();
     })
-    .catch(function () { /* the built-in photos carry the section */ });
+    .catch(function () { if (onNone) onNone(); });
 }
 
 /* ---------- the menu lane: a slow drift you can also steer ----------
@@ -863,6 +867,9 @@ function loadPhotos(key, cb) {
     base = base.slice(0, MAX);
     setW = 0;
     if (!base.length) return;
+    /* the holders reserve the row but have nothing to show yet: keep the lane
+       still until the real photos arrive rather than drifting empty boxes */
+    if (!track.querySelector('img')) return;
     /* asked for stillness: the css wraps these into a plain block of photos,
        so no clones, no measuring, and the motor below never starts */
     if (STILL) { lane.classList.add('ready'); return; }
@@ -977,8 +984,9 @@ function loadPhotos(key, cb) {
       lane.scrollLeft = 0;
       build();
       run();
-    });
-  }, { rootMargin: '400px 0px' }).observe(lane);
+    }, function () { shell.classList.add('no-photos'); });
+    /* a screen and a half of warning, so a fast scroll still arrives to photos */
+  }, { rootMargin: '1200px 0px' }).observe(lane);
 
   new IntersectionObserver(function (e) { onScreen = e[0].isIntersecting; run(); },
     { threshold: 0 }).observe(lane);
@@ -1032,8 +1040,8 @@ function loadPhotos(key, cb) {
       });
       stagger();
       grid.classList.add('in', 'settled');
-    });
-  }, { rootMargin: '400px 0px' }).observe(grid);
+    }, function () { grid.parentNode.classList.add('no-photos'); });
+  }, { rootMargin: '1200px 0px' }).observe(grid);
 })();
 /* ---------- pause the living layer on hidden tabs ---------- */
 document.addEventListener('visibilitychange', function () {
