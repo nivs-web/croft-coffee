@@ -6,7 +6,7 @@
    Storage, so the project stays on the free plan and can never run a bill. */
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   getDatabase, ref as dbRef, onValue, push, set, update, remove
@@ -43,10 +43,39 @@ function say(text, kind) {
 }
 const kb = (n) => Math.round(n / 1024) + 'KB';
 
-/* ---------- auth ---------- */
+/* ---------- auth ----------
+   Login problems have to be readable on the gate itself, since the panel
+   that normally carries messages is hidden until someone is signed in. */
+function gateSay(text, kind) {
+  const el = $('gateMsg');
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'msg' + (kind ? ' ' + kind : '');
+}
+function explain(code) {
+  if (code === 'auth/unauthorized-domain') {
+    return '이 주소(' + location.hostname + ')가 파이어베이스에 등록되어 있지 않습니다. '
+      + 'Authentication → 설정 → 승인된 도메인 에 추가해 주세요.';
+  }
+  if (code === 'auth/popup-blocked') return '브라우저가 팝업을 막았습니다. 주소창 오른쪽에서 팝업을 허용해 주세요.';
+  if (code === 'auth/popup-closed-by-user') return '로그인 창이 닫혔습니다. 다시 시도해 주세요.';
+  if (code === 'auth/operation-not-allowed') return '구글 로그인이 꺼져 있습니다. Authentication → Sign-in method 에서 켜 주세요.';
+  return null;
+}
 $('loginBtn').addEventListener('click', async () => {
-  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-  catch (e) { say('로그인에 실패했습니다: ' + (e.code || e.message), 'err'); }
+  gateSay('로그인 창을 여는 중…');
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+    gateSay('');
+  } catch (e) {
+    const code = e.code || '';
+    const nice = explain(code);
+    gateSay(nice || ('로그인에 실패했습니다: ' + (code || e.message)), 'err');
+    /* some browsers block the popup outright; the redirect flow still works */
+    if (code === 'auth/popup-blocked') {
+      try { await signInWithRedirect(auth, new GoogleAuthProvider()); } catch (e2) {}
+    }
+  }
 });
 $('logoutBtn').addEventListener('click', () => signOut(auth));
 
