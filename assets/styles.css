@@ -584,15 +584,25 @@ main{position:relative;z-index:2;background:var(--canvas)}
   width:345px;aspect-ratio:1/1;overflow:hidden;border-radius:14px;
   background:var(--panel);border:1px solid rgba(188,169,142,.12);
 }
-/* resting a touch quiet, and brighter and sharper under the cursor */
 .ig-item img,.ig-tile img{
   width:100%;height:100%;object-fit:cover;
-  filter:saturate(.88) brightness(.9);
   transition:transform .7s var(--ease-out),filter .4s var(--ease);
 }
-.ig-item:hover img,.ig-tile:hover img,.ig-tile:focus-visible img{
+/* the menu photos are the whole point of that lane, so they sit at full
+   strength from the start rather than waiting for a cursor */
+.ig-item img{filter:saturate(1.1) brightness(1.08) contrast(1.05)}
+/* the instagram wall stays a touch quiet, and lifts under the cursor */
+.ig-tile img{filter:saturate(.88) brightness(.9)}
+.ig-tile:focus-visible img{
   filter:saturate(1.1) brightness(1.08) contrast(1.05);
   transform:scale(1.06);
+}
+@media (hover:hover){
+  .ig-tile:hover img{
+    filter:saturate(1.1) brightness(1.08) contrast(1.05);
+    transform:scale(1.06);
+  }
+  .ig-item:hover img{transform:scale(1.06)}
 }
 
 /* ---------- the instagram wall: twenty photos, no motion, all at once ---------- */
