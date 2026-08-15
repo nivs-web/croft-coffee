@@ -629,7 +629,7 @@ main{position:relative;z-index:2;background:var(--canvas)}
    a hairline between the photos, the way the app itself stacks them. A phone
    runs it right to the edges; a monitor keeps a little air at the sides so a
    tile never grows past the size the uploader saves it at. */
-.ig-grid-wrap{max-width:1600px;margin:0 auto;padding:34px clamp(20px,6vw,90px) 0}
+.ig-grid-wrap{max-width:2600px;margin:0 auto;padding:34px clamp(16px,2.5vw,56px) 0}
 .ig-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .ig-tile{
   position:relative;display:block;aspect-ratio:1/1;overflow:hidden;
@@ -662,6 +662,12 @@ main{position:relative;z-index:2;background:var(--canvas)}
   @keyframes igFlow{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 6px),0,0)}}
   .ig-grid{grid-template-columns:repeat(3,1fr);gap:3px}
   .ig-grid-wrap{padding:26px 0 0}
+}
+
+/* past this width four across would outgrow the 640px the uploader saves,
+   so it becomes six and the tiles stay inside their own resolution */
+@media (min-width:2600px){
+  .ig-grid{grid-template-columns:repeat(6,1fr)}
 }
 
 /* visit */
