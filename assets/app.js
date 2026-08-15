@@ -32,8 +32,8 @@ var VIDEO_URL = MOBILE_HERO
   : (webmScrubOK ? 'assets/hero-scrub.webm' : 'assets/hero-scrub.mp4');
 /* byte sizes only feed the loading ring when a server omits Content-Length */
 var VIDEO_BYTES = MOBILE_HERO
-  ? (webmOK ? 605000 : 2105371)
-  : (webmScrubOK ? 2233000 : 7333136);
+  ? (webmOK ? 605000 : 1109000)
+  : (webmScrubOK ? 2233000 : 2810000);
 var POSTER_URL = 'assets/hero-poster' + IMG_EXT;
 
 var video = document.getElementById('heroVideo');
