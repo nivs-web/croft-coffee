@@ -417,9 +417,11 @@ main{position:relative;z-index:2;background:var(--canvas)}
 .fx .card.in.settled h3::after{transition-delay:0s}
 .fx .card:active{transform:translateY(-2px) scale(.995)}
 
-/* space: the room drifts slower than the page, so time feels stopped inside it */
+/* space: the room drifts slower than the page, so it feels unhurried inside */
 .space-figure{overflow:hidden;border-radius:14px}
-.space-figure img{transform:scale(1.08)}
+/* the drift grows and moves the photo downward only, so the lamp at the top
+   of the frame is never the thing that gets cropped away */
+.space-figure img{transform-origin:50% 0;transform:scale(1.06)}
 .motion-rich .space-figure img{will-change:transform}
 
 /* faq: on touch the answers fold away, so the page is short to travel */
@@ -511,9 +513,13 @@ main{position:relative;z-index:2;background:var(--canvas)}
 }
 
 /* space */
+/* the room photo stands upright, so it takes the narrow column and the words
+   take the wide one, both settled on the same centre line */
 .space-grid{
-  display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;margin-top:40px;
+  display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+  gap:52px;align-items:center;margin-top:40px;
 }
+.space-grid .lede{max-width:40ch}
 .space-figure{position:relative}
 .space-figure img{border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 .space-figure::before{

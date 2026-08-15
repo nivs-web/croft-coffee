@@ -1,6 +1,7 @@
-/* croft coffee · self-hosted webfonts, subset to the 404 characters
-   this site actually prints. The full Korean families run to 790KB across 46
-   files; these are the same faces with only the needed glyphs.
+/* croft coffee · self-hosted webfonts, subset to the characters this site
+   actually prints. The full Korean families run to 790KB across 46 files;
+   these are the same faces carrying only the glyphs that are used.
+
    IMPORTANT: these hold only the glyphs listed in fonts/subset-chars.txt. Add
    wording with a new character and it will render in a fallback face. To
    regenerate, collect every character the pages print, then ask Google for
@@ -9,6 +10,7 @@
        &family=Gowun+Dodum&family=Nanum+Gothic+Coding&family=Caveat:wght@600
        &display=swap&text=<the characters, url encoded>
    Request it with a current Chrome user agent so the reply is woff2.
+
    Gowun Batang, Gowun Dodum, Nanum Gothic Coding and Caveat are all released
    under the SIL Open Font License 1.1; see assets/fonts/OFL.txt. */
 @font-face{font-family:'Gowun Batang';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/GowunBatang-400.woff2) format('woff2')}
