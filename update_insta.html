@@ -32,17 +32,30 @@
     <p class="count" id="count"></p>
 
     <div class="drop" id="drop">
-      <p>사진을 이 상자에 끌어다 놓으세요. 자동으로 정사각형 WebP로 바꿔서 올립니다.</p>
+      <p>사진을 이 상자에 끌어다 놓으세요. 여러 장이면 올리기 전에 순서를 정할 수 있습니다.</p>
       <button class="btn" id="pick" type="button">사진 고르기</button>
       <input type="file" id="file" accept="image/*" multiple>
       <div class="bar" id="bar"><span id="barFill"></span></div>
       <p class="msg" id="msg"></p>
     </div>
 
+    <div class="queue" id="queue" hidden>
+      <p class="queue-head" id="queueHead"></p>
+      <div class="queue-items" id="queueItems"></div>
+      <p class="queue-go">
+        <button class="btn" id="queueGo" type="button">이 순서로 올리기</button>
+        <button class="btn btn-quiet btn-sm" id="queueClear" type="button">취소</button>
+      </p>
+    </div>
+
     <p class="cap-note">13장째부터는 목록에 남아 있어도 홈페이지에는 나오지 않습니다.
       순서는 ↑ ↓ 로 바꾸고, ✕ 로 지웁니다.</p>
 
     <div class="items" id="items"></div>
+
+    <p class="danger">
+      <button class="btn btn-danger btn-sm" id="wipeAll" type="button">사진 전체 삭제</button>
+    </p>
 
     <p style="margin-top:34px">
       <a class="btn btn-quiet btn-sm" href="update_menu.html">메뉴 사진 관리로</a>
@@ -51,7 +64,7 @@
   </div>
 
 </div>
-<script>window.ADMIN = { key: 'insta', max: 12, maxEdge: 460, quality: 0.70 };</script>
+<script>window.ADMIN = { key: 'insta', max: 12, maxEdge: 640, quality: 0.72 };</script>
 <script type="module" src="assets/admin.js"></script>
 </body>
 </html>

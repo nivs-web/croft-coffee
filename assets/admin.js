@@ -244,14 +244,72 @@ function toImages(file) {
   });
 }
 
-async function handleFiles(fileList) {
+/* ---------- the waiting line ----------
+   A file picker hands the files over in whatever order the operating system
+   lists them, never the order they were clicked, and the browser is not told
+   which was clicked first. So the order is chosen here instead: the picked
+   photos wait in a line that can be rearranged before anything is uploaded. */
+let queued = [];
+const queueBox = $('queue'), queueItems = $('queueItems'), queueHead = $('queueHead');
+
+function stage(fileList) {
   const files = [].slice.call(fileList).filter((f) => /^image\//.test(f.type));
   if (!files.length) { say('이미지 파일이 아닙니다.', 'err'); return; }
+  files.forEach((f) => queued.push({ file: f, url: URL.createObjectURL(f) }));
+  say('');
+  drawQueue();
+}
+
+function clearQueue() {
+  queued.forEach((q) => URL.revokeObjectURL(q.url));
+  queued = [];
+  drawQueue();
+}
+
+function drawQueue() {
+  if (!queued.length) { queueBox.hidden = true; queueItems.textContent = ''; return; }
+  queueBox.hidden = false;
+  const room = MAX - rows.length;
+  queueHead.textContent = '올릴 사진 ' + queued.length + '장입니다. 이 순서 그대로 등록됩니다.'
+    + (queued.length > room ? '  자리가 ' + Math.max(0, room) + '장뿐이라 앞에서부터 그만큼만 올라갑니다.' : '');
+  queueItems.textContent = '';
+  queued.forEach((q, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'q-item' + (i >= room ? ' over-cap' : '');
+    const img = document.createElement('img');
+    img.src = q.url; img.alt = '';
+    const n = document.createElement('span');
+    n.className = 'q-num';
+    n.textContent = i + 1;
+    const tools = document.createElement('div');
+    tools.className = 'q-tools';
+    const mk = (label, title, disabled, fn) => {
+      const b = document.createElement('button');
+      b.className = 'icon-btn'; b.type = 'button'; b.title = title;
+      b.textContent = label; b.disabled = disabled;
+      b.addEventListener('click', fn);
+      return b;
+    };
+    tools.append(
+      mk('←', '앞으로', i === 0, () => { const t = queued[i - 1]; queued[i - 1] = queued[i]; queued[i] = t; drawQueue(); }),
+      mk('→', '뒤로', i === queued.length - 1, () => { const t = queued[i + 1]; queued[i + 1] = queued[i]; queued[i] = t; drawQueue(); }),
+      mk('✕', '빼기', false, () => { URL.revokeObjectURL(queued[i].url); queued.splice(i, 1); drawQueue(); })
+    );
+    cell.append(img, n, tools);
+    queueItems.appendChild(cell);
+  });
+}
+
+async function uploadQueued() {
   const room = MAX - rows.length;
   if (room <= 0) { say('이미 ' + MAX + '장이 모두 찼습니다. 먼저 지워 주세요.', 'err'); return; }
-  const use = files.slice(0, room);
-  if (files.length > room) say(room + '장만 올립니다. 나머지는 자리가 없습니다.', 'err');
+  const use = queued.slice(0, room).map((q) => q.file);
+  if (queued.length > room) say(room + '장만 올립니다. 나머지는 자리가 없습니다.', 'err');
+  $('queueGo').disabled = true;
 
+  /* fix the starting number once: the live list grows underneath as each photo
+     lands, so reading its length again mid-batch would skip numbers */
+  const base = rows.length;
   bar.classList.add('on');
   let done = 0;
   let fallbackWarn = false;
@@ -264,7 +322,7 @@ async function handleFiles(fileList) {
          The main photo is saved on its own first, so a missing rule on the
          fallback branch can never block the upload itself. */
       const id = push(dbRef(db, KEY)).key;
-      const order = rows.length + done;
+      const order = base + done;
       await set(dbRef(db, KEY + '/' + id), {
         url: pair.webp, order: order, link: '', createdAt: Date.now()
       });
@@ -280,6 +338,8 @@ async function handleFiles(fileList) {
     }
   }
   setTimeout(() => { bar.classList.remove('on'); barFill.style.width = '0'; }, 700);
+  $('queueGo').disabled = false;
+  if (done) clearQueue();
   if (done && fallbackWarn) {
     say(done + '장을 올렸습니다. 다만 구형 브라우저용 사본(' + KEY + '_jpg)은 저장되지 않았습니다. '
       + '데이터베이스 규칙에 ' + KEY + '_jpg 를 추가하고 다시 올려 주세요.', 'err');
@@ -288,9 +348,39 @@ async function handleFiles(fileList) {
   }
 }
 
+/* ---------- clearing the lot ----------
+   Two presses, never one: the first arms the button and says what it is about
+   to do, and it disarms itself after a few seconds if nothing follows. */
+let armTimer = null;
+const wipeBtn = $('wipeAll');
+function disarm() {
+  armTimer = null;
+  wipeBtn.classList.remove('armed');
+  wipeBtn.textContent = '사진 전체 삭제';
+}
+wipeBtn.addEventListener('click', async () => {
+  if (!rows.length) { say('지울 사진이 없습니다.'); return; }
+  if (!armTimer) {
+    wipeBtn.classList.add('armed');
+    wipeBtn.textContent = rows.length + '장을 모두 지웁니다. 되돌릴 수 없습니다. 한 번 더 누르세요';
+    armTimer = setTimeout(disarm, 6000);
+    return;
+  }
+  clearTimeout(armTimer);
+  disarm();
+  const n = rows.length;
+  try {
+    await remove(dbRef(db, KEY));
+    remove(dbRef(db, KEY + '_jpg')).catch(function () {});
+    say(n + '장을 모두 지웠습니다.', 'ok');
+  } catch (e) { say('삭제 실패: ' + e.code, 'err'); }
+});
+
 const drop = $('drop');
 $('pick').addEventListener('click', () => $('file').click());
-$('file').addEventListener('change', (e) => { handleFiles(e.target.files); e.target.value = ''; });
+$('file').addEventListener('change', (e) => { stage(e.target.files); e.target.value = ''; });
+$('queueGo').addEventListener('click', uploadQueued);
+$('queueClear').addEventListener('click', clearQueue);
 ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => {
   e.preventDefault(); drop.classList.add('over');
 }));
@@ -299,4 +389,4 @@ $('file').addEventListener('change', (e) => { handleFiles(e.target.files); e.tar
   if (ev === 'dragleave' && drop.contains(e.relatedTarget)) return;
   drop.classList.remove('over');
 }));
-drop.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+drop.addEventListener('drop', (e) => stage(e.dataTransfer.files));
