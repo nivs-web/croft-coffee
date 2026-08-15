@@ -571,7 +571,7 @@ function parallax() {
     var r = spaceFig.getBoundingClientRect();
     if (r.bottom < -60 || r.top > window.innerHeight + 60) return;
     var off = (r.top + r.height / 2 - window.innerHeight / 2) * -0.055;
-    var shift = Math.round(Math.max(-16, Math.min(0, off)) * 10) / 10;
+    var shift = Math.round(Math.max(0, Math.min(16, off)) * 10) / 10;
     if (shift === lastShift) return;      /* delta gate: never write the same value twice */
     lastShift = shift;
     spaceImg.style.transform = 'translate3d(0,' + shift + 'px,0) scale(1.06)';

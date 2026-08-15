@@ -427,9 +427,9 @@ main{position:relative;z-index:2;background:var(--canvas)}
 
 /* space: the room drifts slower than the page, so it feels unhurried inside */
 .space-figure{overflow:hidden;border-radius:14px}
-/* the drift grows and moves the photo downward only, so the lamp at the top
-   of the frame is never the thing that gets cropped away */
-.space-figure img{transform-origin:50% 0;transform:scale(1.06)}
+/* the drift grows and moves the photo upward only, so the crop is taken out
+   of the empty sky rather than off the chairs along the bottom */
+.space-figure img{transform-origin:50% 100%;transform:scale(1.06)}
 .motion-rich .space-figure img{will-change:transform}
 
 /* faq: on touch the answers fold away, so the page is short to travel */
